@@ -1,5 +1,9 @@
 <?php
 
+function bdConnection(){
+  $bd = mysqli_connect(BD_SERVEUR, BD_USER, BD_PASS, BD_NAME);
+}
+
 function niveauDossier($niveauDossier){
   $signeNiveau = str_repeat("../", $niveauDossier);
   $signeNiveau = substr($signeNiveau, 0, -1);;

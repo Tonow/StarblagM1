@@ -5,6 +5,7 @@ ob_start();
 require ('bibli_html_fonct.php');
 require ('bibli_php_fonct.php');
 require ('bibli_requets_sql.php');
+require ('setting.php');
 
 $niveauDossier = 1;
 $dossier = niveauDossier($niveauDossier);
@@ -220,114 +221,6 @@ if ($stmtListBlog = mysqli_prepare($bd, $queryListBlog)) {
 
 /* Fermeture de la connexion */
 mysqli_close($bd);
-
-
-
-
-
-<<<INDEXPREMIER
-	<div id="blcContenu">
-
-		<!-- BLOC HIT PARADE -->
-		<div id="blcHitParade">
-			<div id="blcTag">
-				<h3>Tags [+]</h3>
-				<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
-			</div>
-
-			<table>
-				<tr>
-					<td style="padding: 0" colspan="2">
-						<h3>Les 3 blogs les plus visit�s</h3>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a href="article/articles_voir.php">Le H L M avec du T</a>
-					</td>
-					<td>185</td>
-				</tr>
-				<tr>
-					<td>
-						<a href="article/articles_voir.php">Comment devenir Bill Gates en 12 jours</a>
-					</td>
-					<td>149</td>
-				</tr>
-				<tr>
-					<td>
-						<a href="article/articles_voir.php">SQL sans prise de t�te</a>
-					</td>
-					<td>109</td>
-				</tr>
-			</table>
-
-		    <table>
-		    	<tr>
-				<td style="padding: 0" colspan="2">
-					<h3>Les 3 articles les mieux not�s</h3>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<a href="article/articles_voir.php">La fonction count(*)</a>
-				</td>
-				<td>
-					<div class="classement">39</div>
-				</td>
-			</tr>
-				<tr>
-					<td>
-						<a href="article/articles_voir.php">Des tables avec des bords</a>
-					</td>
-					<td>
-						<div class="classement">37</div>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<a href="article/articles_voir.php">Centrer un bloc avec une r�gle de style</a>
-					</td>
-					<td>
-						<div class="classement">28</div>
-					</td>
-				</tr>
-			</table>
-		</div>
-		<!-- FIN BLOC HIT PARADE -->
-
-		<!-- BLOCS BLOG -->
-		<div class="blcBlog">
-			<h3>
-				<span class="blogAuteur">Fran�ois Piat - 29/07/2008</span>
-				Comment devenir Bill Gates en 12 jours
-			</h3>
-			<p>Ce blog est consacr� � MA vie, MON oeuvre, MES actions, MES pens�es (profondes)
-			pour l �dification des masses populaires informatiques.</p>
-			<p class="petit">
-				<a class="blogLienArticle" href="article/articles_voir.php" title="Voir les articles du blog">
-	        	4 articles
-	        	</a>
-	        	- 12/09/2008
-	        </p>
-		</div>
-		<div class="blcBlog">
-			<h3>
-				<span class="blogAuteur">Chewie - 02/08/2008</span>
-				JaBa Script
-			</h3>
-			<p>&quot;Le langage JavaScript est trop puissant pour �tre confi� � des
-					d�veloppeurs Web&quot; - Fran�ois Piat</p>
-			<p class="petit">
-				Aucun article
-	        </p>
-		</div>
-		<!-- FIN BLOCS BLOG -->
-
- 	<!-- les autres tables ne sont pas cod�es car elles ont toutes con�ues sur le m�me mod�le -->
-
-	</div>  <!-- FIN DU BLOC CONTENU -->
-INDEXPREMIER;
-
 
 footerGlobal();
 
