@@ -1,0 +1,338 @@
+<?php
+
+ob_start();
+
+require ('bibli_html_fonct.php');
+require ('bibli_php_fonct.php');
+require ('bibli_requets_sql.php');
+
+$niveauDossier = 1;
+$dossier = niveauDossier($niveauDossier);
+
+$connectionBd = 'localhost';
+$userBd = 'starblags_user';
+$pwBd = 'starblags_passe';
+$nameBd = 'starblags';
+
+
+firstHtml();
+
+headPublique('Accueil', $dossier);
+
+blocBandeau($dossier);
+
+
+
+//-- Connexion base de donnée --------------------------------------
+$bd = mysqli_connect($connectionBd, $userBd, $pwBd, $nameBd);
+
+
+/* Vérifie la connexion */
+if (mysqli_connect_errno()) {
+   printf("Échec de la connexion : %s\n", mysqli_connect_error());
+   exit();
+}
+
+
+/*
+* Liste requete SQL
+* Elle se trouve dans bibli_requets_sql.php
+**/
+$queryListBlog = queryListBlog();
+
+$queryNbVisite = queryNbVisite();
+
+$queryNoteArticle = queryNoteArticle();
+/*
+* FIN --> Liste requete SQL
+**/
+
+
+
+/*
+* Hit Parade Debut
+**/
+echo "<!-- BLOC HIT PARADE -->
+<div id='blcContenu'>
+
+<div id='blcHitParade'>
+	<div id='blcTag'>
+		<h3>Tags [+]</h3>
+		<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+	</div>";
+
+
+/*
+* Les Trois blog les plus visiter
+**/
+if ($stmtNbVisite = mysqli_prepare($bd, $queryNbVisite)) {
+
+    //Exécution de la requête
+    mysqli_stmt_execute($stmtNbVisite);
+
+    //Association des variables de résultat
+    mysqli_stmt_bind_result($stmtNbVisite, $bvIDBlog, $nbVisite, $blID, $blTitre);
+
+		echo "
+		<table>
+			<tr>
+				<td style='padding: 0' colspan='2'>
+					<h3>Les 3 blogs les plus visit�s</h3>
+				</td>
+			</tr>";
+
+
+		$contPlusVisit = 0;
+    // Lecture des valeurs
+    while (mysqli_stmt_fetch($stmtNbVisite) && $contPlusVisit<3) {
+
+				echo "
+				<tr>
+					<td>
+						<a href='article/articles_voir.php'>$blTitre</a>
+					</td>
+					<td>$nbVisite</td>
+				</tr>";
+				$contPlusVisit++;
+			}
+
+			echo "</table>";
+
+			//Fermeture de la commande
+			mysqli_stmt_close($stmtNbVisite);
+		}
+/*
+* FIN --> Les Trois blog les plus visiter
+*
+**/
+
+
+
+/*
+* Les Trois Article les mieux Noté
+**/
+if ($stmtNoteArticle = mysqli_prepare($bd, $queryNoteArticle)) {
+
+    //Exécution de la requête
+    mysqli_stmt_execute($stmtNoteArticle);
+
+    //Association des variables de résultat
+    mysqli_stmt_bind_result($stmtNoteArticle, $anIDArticle, $somNoteArticle, $arTitre);
+
+		echo "
+		<table>
+			<tr>
+		<td style='padding: 0' colspan='2'>
+			<h3>Les 3 articles les mieux not�s</h3>
+		</td>
+	</tr>
+		";
+
+
+
+		$contMieuxNote = 0;
+    // Lecture des valeurs
+    while (mysqli_stmt_fetch($stmtNoteArticle) && $contMieuxNote<3) {
+
+				echo "
+				<tr>
+					<td>
+						<a href='article/articles_voir.php'>$arTitre</a>
+					</td>
+					<td>
+						<div class='classement'>$somNoteArticle</div>
+					</td>
+				</tr>
+				";
+				$contMieuxNote++;
+			}
+
+			echo "</table>";
+
+			//Fermeture de la commande
+			mysqli_stmt_close($stmtNoteArticle);
+		}
+/*
+* FIN --> Les Trois Article les mieux Noté
+*
+**/
+
+echo "</div>
+</div>
+		<!-- FIN BLOCS BLOG -->";
+/*
+* FIN --> Hit Parade
+**/
+
+
+
+/*
+* Liste des blog
+**/
+if ($stmtListBlog = mysqli_prepare($bd, $queryListBlog)) {
+
+    /* Exécution de la requête */
+    mysqli_stmt_execute($stmtListBlog);
+
+    /* Association des variables de résultat */
+    mysqli_stmt_bind_result($stmtListBlog, $idBlog , $titre, $auteur, $date , $resume , $nb_articles_page);
+
+
+    /* Lecture des valeurs */
+    while (mysqli_stmt_fetch($stmtListBlog)) {
+
+				$dateFormat = dateBlogToDate($date); // formate la date
+
+				echo "
+				<div id='blcContenu'>
+
+				<!-- BLOCS BLOG -->
+				<div class='blcBlog'>
+					<h3>
+						<span class='blogAuteur'>$auteur - $dateFormat</span>
+						$titre
+					</h3>
+					<p>$resume</p>
+					<p class='petit'>
+						<a class='blogLienArticle' href='article/articles_voir.php?id=$idBlog' title='$titre'>
+			        	$nb_articles_page articles
+			        	</a>
+			        	- $dateFormat   <!-- XXX TODO A Modifier avec la date du dernier article -->
+			        </p>
+				</div>
+				<!-- FIN BLOCS BLOG -->
+
+				</div>
+				";
+    }
+
+
+
+    /* Fermeture de la commande */
+    mysqli_stmt_close($stmtListBlog);
+}
+/*
+* FIN --> Liste des blog
+*
+**/
+
+
+
+/* Fermeture de la connexion */
+mysqli_close($bd);
+
+
+
+
+
+<<<INDEXPREMIER
+	<div id="blcContenu">
+
+		<!-- BLOC HIT PARADE -->
+		<div id="blcHitParade">
+			<div id="blcTag">
+				<h3>Tags [+]</h3>
+				<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+			</div>
+
+			<table>
+				<tr>
+					<td style="padding: 0" colspan="2">
+						<h3>Les 3 blogs les plus visit�s</h3>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="article/articles_voir.php">Le H L M avec du T</a>
+					</td>
+					<td>185</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="article/articles_voir.php">Comment devenir Bill Gates en 12 jours</a>
+					</td>
+					<td>149</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="article/articles_voir.php">SQL sans prise de t�te</a>
+					</td>
+					<td>109</td>
+				</tr>
+			</table>
+
+		    <table>
+		    	<tr>
+				<td style="padding: 0" colspan="2">
+					<h3>Les 3 articles les mieux not�s</h3>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a href="article/articles_voir.php">La fonction count(*)</a>
+				</td>
+				<td>
+					<div class="classement">39</div>
+				</td>
+			</tr>
+				<tr>
+					<td>
+						<a href="article/articles_voir.php">Des tables avec des bords</a>
+					</td>
+					<td>
+						<div class="classement">37</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="article/articles_voir.php">Centrer un bloc avec une r�gle de style</a>
+					</td>
+					<td>
+						<div class="classement">28</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- FIN BLOC HIT PARADE -->
+
+		<!-- BLOCS BLOG -->
+		<div class="blcBlog">
+			<h3>
+				<span class="blogAuteur">Fran�ois Piat - 29/07/2008</span>
+				Comment devenir Bill Gates en 12 jours
+			</h3>
+			<p>Ce blog est consacr� � MA vie, MON oeuvre, MES actions, MES pens�es (profondes)
+			pour l �dification des masses populaires informatiques.</p>
+			<p class="petit">
+				<a class="blogLienArticle" href="article/articles_voir.php" title="Voir les articles du blog">
+	        	4 articles
+	        	</a>
+	        	- 12/09/2008
+	        </p>
+		</div>
+		<div class="blcBlog">
+			<h3>
+				<span class="blogAuteur">Chewie - 02/08/2008</span>
+				JaBa Script
+			</h3>
+			<p>&quot;Le langage JavaScript est trop puissant pour �tre confi� � des
+					d�veloppeurs Web&quot; - Fran�ois Piat</p>
+			<p class="petit">
+				Aucun article
+	        </p>
+		</div>
+		<!-- FIN BLOCS BLOG -->
+
+ 	<!-- les autres tables ne sont pas cod�es car elles ont toutes con�ues sur le m�me mod�le -->
+
+	</div>  <!-- FIN DU BLOC CONTENU -->
+INDEXPREMIER;
+
+
+footerGlobal();
+
+endHtml();
+
+
+
+?>

@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>StarBlags - Accueil</title>
+	<link rel="stylesheet" href="../css/modele_1.css" type="text/css">
+</head>
+<body>
+	<div id="blcBandeau">
+		<form method="post" action="php/login.php">
+			<label for="txtPseudo">Pseudo</label>
+			<input type="text" name="txtPseudo" id="txtPseudo" value="">
+			<label for="txtPasse">Passe</label>
+			<input type="password" name="txtPasse" id="txtPasse" value="">
+			<input type="submit" name="btnLogin" value="Mon blog" class="bouton">		
+			<input type="submit" name="btnNouveau" value="Créer un blog" class="bouton">
+		</form>
+		<a href="index.html">
+			<img src="../images/logo.gif" title="Accueil StarBlagS" width="104" height="67">
+		</a>
+	</div> <!-- FIN DU BLOC BANDEAU -->
+
+	<div id="blcContenu">
+
+		<!-- BLOC HIT PARADE -->
+		<div id="blcHitParade">
+			<div id="blcTag">
+				<h3>Tags [+]</h3>
+				<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+			</div>
+			
+			<table>
+				<tr> 
+					<td style="padding: 0" colspan="2">
+						<h3>Les 3 blogs les plus visités</h3>
+					</td>
+				</tr>
+				<tr> 
+					<td>
+						<a href="php/articles_voir.php">Le H L M avec du T</a>
+					</td>
+					<td>185</td>
+				</tr>
+				<tr> 
+					<td>
+						<a href="php/articles_voir.php">Comment devenir Bill Gates en 12 jours</a>
+					</td>
+					<td>149</td>
+				</tr>
+				<tr> 
+					<td>
+						<a href="php/articles_voir.php">SQL sans prise de tête</a>
+					</td>
+					<td>109</td>
+				</tr>
+			</table>
+				    
+		    <table>
+		    	<tr>
+				<td style="padding: 0" colspan="2">
+					<h3>Les 3 articles les mieux notés</h3>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<a href="php/articles_voir.php">La fonction count(*)</a>
+				</td>
+				<td>
+					<div class="classement">39</div>
+				</td>
+			</tr>
+				<tr>
+					<td>
+						<a href="php/articles_voir.php">Des tables avec des bords</a>
+					</td>
+					<td>
+						<div class="classement">37</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<a href="php/articles_voir.php">Centrer un bloc avec une règle de style</a>
+					</td>
+					<td>
+						<div class="classement">28</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- FIN BLOC HIT PARADE -->
+		
+		<!-- BLOCS BLOG -->
+		<div class="blcBlog">
+			<h3>		
+				<span class="blogAuteur">François Piat - 29/07/2008</span>
+				Comment devenir Bill Gates en 12 jours
+			</h3>
+			<p>Ce blog est consacré à MA vie, MON oeuvre, MES actions, MES pensées (profondes) 
+			pour l'édification des masses populaires informatiques.</p>
+			<p class="petit">
+				<a class="blogLienArticle" href="php/articles_voir.php" title="Voir les articles du blog"> 
+	        	4 articles
+	        	</a>
+	        	- 12/09/2008
+	        </p>
+		</div>
+		<div class="blcBlog">
+			<h3>
+				<span class="blogAuteur">Chewie - 02/08/2008</span>
+				JaBa Script
+			</h3>
+			<p>&quot;Le langage JavaScript est trop puissant pour être confié à des 
+					développeurs Web&quot; - François Piat</p>
+			<p class="petit">
+				Aucun article
+	        </p>
+		</div>	
+		<!-- FIN BLOCS BLOG -->
+
+ 	<!-- les autres tables ne sont pas codées car elles ont toutes conçues sur le même modèle --> 
+	
+	</div>  <!-- FIN DU BLOC CONTENU -->
+	
+	<div id="blcPied">
+		StarBlagS est une marque déposée appartenant à la société PTICON(PiaT International Corporation Original Network)
+		<br>&nbsp;
+		<br>
+		<a href="#" onclick="alert('Faux lien !'); return false;">Contactez-nous</a> -
+		<a href="#" onclick="alert('Faux lien !'); return false;">Informations légales</a> -
+		<a href="#" onclick="alert('Faux lien !'); return false;">Conditions d'utilisation</a>
+	</div>  <!-- FIN DU BLOC PIED -->
+</body>
+</html>
