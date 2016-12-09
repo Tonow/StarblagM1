@@ -1,6 +1,7 @@
 <?php
 
-ob_start();
+ob_start(); // bufferisation
+
 
 require ('bibli_html_fonct.php');
 require ('bibli_php_fonct.php');
@@ -10,10 +11,6 @@ require ('setting.php');
 $niveauDossier = 1;
 $dossier = niveauDossier($niveauDossier);
 
-$connectionBd = 'localhost';
-$userBd = 'starblags_user';
-$pwBd = 'starblags_passe';
-$nameBd = 'starblags';
 
 
 firstHtml();
@@ -25,14 +22,7 @@ blocBandeau($dossier);
 
 
 //-- Connexion base de donnée --------------------------------------
-$bd = mysqli_connect($connectionBd, $userBd, $pwBd, $nameBd);
-
-
-/* Vérifie la connexion */
-if (mysqli_connect_errno()) {
-   printf("Échec de la connexion : %s\n", mysqli_connect_error());
-   exit();
-}
+bdConnection();
 
 
 /*

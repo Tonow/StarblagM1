@@ -5,23 +5,13 @@ ob_start();
 require ('../bibli_html_fonct.php');
 require ('../bibli_php_fonct.php');
 require ('../bibli_requets_sql.php');
+require ('../setting.php');
 
 $niveauDossier = 2;
 $dossier = niveauDossier($niveauDossier);
 
-$connectionBd = 'localhost';
-$userBd = 'starblags_user';
-$pwBd = 'starblags_passe';
-$nameBd = 'starblags';
 
-/*foreach ($_GET as $nom => $valeur) {
-    echo "nom = $nom valeur = $valeur";
-		return $nom = $valeur;
-}*/
-
-//$id = htmlspecialchars($_GET["id"]);
-
-$id = $_GET["id"];
+$id = $_GET["id"]; // TODO XXX probleme id si on l'utilise avec 3 blog les plus visité et 3 article les mieux noté
 $id = (int)$id;
 
 //echo "l'id est = $id";
@@ -35,14 +25,7 @@ blocBandeau($dossier);
 
 
 //-- Connexion base de donnée --------------------------------------
-$bd = mysqli_connect($connectionBd, $userBd, $pwBd, $nameBd);
-
-
-/* Vérifie la connexion */
-if (mysqli_connect_errno()) {
-   printf("Échec de la connexion : %s\n", mysqli_connect_error());
-   exit();
-}
+bdConnection();
 
 
 /*
