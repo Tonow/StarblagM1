@@ -1,5 +1,11 @@
 <?php
 
+
+/**
+ * Permet de generer le html pour le footer de tout les page
+ *
+ * @return void --> le footer html
+ */
 function footerGlobal(){
   echo <<<FOOTER
   <div id="blcPied">
@@ -15,6 +21,13 @@ FOOTER;
 }
 
 
+/**
+ * Permet de generer le html pour le bandeau de tout les page
+ *
+ * @param string $dossier niveau dans le quelle se trouve le dossier
+ *
+ * @return void --> le beadeau html
+ */
 function blocBandeau($dossier){
 	echo <<<BANDEAU
 	<div id="blcBandeau">
@@ -33,7 +46,14 @@ function blocBandeau($dossier){
 BANDEAU;
 }
 
-
+/**
+ * Permet de generer le html pour le head de tout les page en personalisant le titre
+ *
+ * @param string $titre titre de la page
+ * @param string $dossier niveau dans le quelle se trouve le dossier
+ *
+ * @return void --> le head html
+ */
 function headPublique($titre , $dossier){
 	echo <<<HEAD1
 	<head>
@@ -49,7 +69,11 @@ HEAD2;
 }
 
 
-
+/**
+ * Permet de generer le html pour le debut de tout les pages
+ *
+ * @return void --> le debut html de tout les pages
+ */
 function firstHtml(){
 	echo <<<FIRST1
 	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -58,6 +82,11 @@ FIRST1;
 }
 
 
+/**
+ * Permet de generer le html pour la fin de tout les pages
+ *
+ * @return void --> la fin html de tout les pages
+ */
 function endHtml(){
 	echo "
 	</body>
