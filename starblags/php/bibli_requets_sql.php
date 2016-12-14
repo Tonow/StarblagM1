@@ -20,11 +20,12 @@ function querySingleBlog($id){
 
 
 function queryNbVisite(){
-  $queryNbVisite = "SELECT blogs_visites.bvIDBlog, COUNT(blogs_visites.bvIDBlog) AS Nbvisite, blogs.blID, blogs.blTitre
-  							FROM blogs_visites
-  							JOIN blogs ON blogs.blID = blogs_visites.bvIDBlog
-  							GROUP BY blogs_visites.bvIDBlog
-  							ORDER BY `Nbvisite`  DESC";
+  $queryNbVisite = "SELECT COUNT(bvIDBlog) AS Nbvisite, blID, blTitre
+  							FROM blogs_visites , blogs
+  							WHERE blID = bvIDBlog
+  							GROUP BY blID
+  							ORDER BY 'Nbvisite'  DESC
+                LIMIT 3";
   return $queryNbVisite;
 }
 

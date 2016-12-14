@@ -1,6 +1,11 @@
 <?php
 
 
+/////////////////////////////////////////
+/////////////////////////////////////////
+//                  BDD                //
+/////////////////////////////////////////
+/////////////////////////////////////////
 
 /**
  * Permet de se connecter a la base de donné
@@ -84,6 +89,66 @@ function bdConnexionErreurExit($msg){
 
 
 
+//___________________________________________________________________
+/**
+ * Gestion d'une erreur de requ�te � la base de donn�es.
+ *
+ * @param string	$sql	requ�te SQL provoquant l'erreur
+ */
+function bdErreurRequet($sql) {
+	$errNum = mysqli_errno($GLOBALS['bd']);
+	$errTxt = mysqli_error($GLOBALS['bd']);
+
+	// Collecte des informations facilitant le debugage
+	$msg = '<h4>Erreur de requ&ecirc;te</h4>'
+			."<pre><b>Erreur mysql :</b> $errNum"
+			."<br> $errTxt"
+			."<br><br><b>Requ&ecirc;te :</b><br> $sql"
+			.'<br><br><b>Pile des appels de fonction</b>';
+
+	// R�cup�ration de la pile des appels de fonction
+	$msg .= '<table border="1" cellspacing="0" cellpadding="2">'
+			.'<tr><td>Fonction</td><td>Appel&eacute;e ligne</td>'
+			.'<td>Fichier</td></tr>';
+
+	// http://www.php.net/manual/fr/function.debug-backtrace.php
+	$appels = debug_backtrace();
+	for ($i = 0, $iMax = count($appels); $i < $iMax; $i++) {
+		$msg .= '<tr align="center"><td>'
+				.$appels[$i]['function'].'</td><td>'
+				.$appels[$i]['line'].'</td><td>'
+				.$appels[$i]['file'].'</td></tr>';
+	}
+
+	$msg .= '</table></pre>';
+
+	fp_bdErreurExit($msg);
+}
+
+
+
+/**
+ * Protection HTML des chaînes contenues dans un tableau
+ * Le tableau est passé par référence.
+ *
+ * @param array     $tab    Tableau des chaînes à protéger
+ */
+function htmlProteger(&$tab) {
+  //echo "entre htmlProteger";
+    foreach ($tab as $cle => $val) {
+        $tab[$cle] = htmlentities($val, ENT_COMPAT, 'ISO-8859-1');
+        //echo "corps htmlProteger";
+    }
+}
+
+
+/////////////////////////////////////////
+//                  FIN                //
+//                  BDD                //
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+
 /**
  * Donne en fonction du niveau dans le quelle se trouve le fichier l'ecriture du chemin qui permet de le retrouver
  * dans la hierachie de dossiers
@@ -117,5 +182,141 @@ function dateBlogToDate($dateBlog){
   return $date;
 }
 
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+//                  URL                //
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+//_____________________________________________________________________________
+/**
+ * Cryptage / decryptage d'une cha�ne avec l'algorithme RC4
+ *
+ * @param	string	$texte	Donn�es � crypter
+ * @param	string	$cle	Cl� de cryptage
+ *
+ * @return string	Donn�es crypt�es ou d�crypt�es
+ */
+ function doRC4($texte, $cle) {
+    $cles = array();	// tableau initialis� avec les octets de la cl�
+    $etats = array();	// table d'�tats : flux appliqu� sur le texte clair
+    $tmp = '';
+    $cleLong = strlen($cle);
+	$texteLong = strlen($texte);
+	$RC4 = '';
+
+	// Premi�re �tape : cr�ation de 2 tableaux de 256 octets en fonction de la cl�
+	// Le tableau $cles est initialis� avec les octets de la cl�
+	// Le tableau $etats est initialis� avec les nombres de 0 � 255 permut�s
+	// pseudo-al�atoirement selon le tableau K.
+    for ($i = 0; $i <= 255; $i++) {
+        $cles[$i] = ord(substr($cle, ($i % $cleLong), 1));
+        $etats[$i] = $i;
+    }
+
+    for ($i = $x = 0; $i <= 255; $i++) {
+        $x = ($x + $etats[$i] + $cles[$i]) % 256;
+        $tmp = $etats[$i];
+        $etats[$i] = $etats[$x];
+        $etats[$x] = $tmp;
+    }
+
+    // Deuxi�me �tape : permutations pour le chiffrement/d�chiffrement.
+    // Toutes les additions sont ex�cut�es modulo 256.
+	// Le tableau $etats change � chaque it�ration en ayant deux �l�ments permut�s.
+    for ($a = $i = $j = 0, $k = ''; $i < $texteLong; $i++) {
+        $a = ($a + 1) % 256;
+        $j = ($j + $etats[$a]) % 256;
+        $tmp = $etats[$a];
+        $etats[$a] = $etats[$j];
+        $etats[$j] = $tmp;
+        $k = $etats[(($etats[$a] + $etats[$j]) % 256)];
+        $tmp = ord(substr($texte, $i, 1)) ^ $k;
+        $RC4 .= chr($tmp);
+    }
+
+    return $RC4;
+}
+
+
+//_____________________________________________________________________________
+/***
+* Composition d'une URL avec cryptage des param�tres
+*
+* Les param�tres de l'URL sont mis les uns � la suite des autres, s�par�s par
+* le caract�re | (pipe). On ajoute en d�but de la cha�ne des param�tres la
+* signature de cryptage. La cha�ne est ensuite prot�g�e pour les caract�res
+* sp�ciaux d'URL. Elle est ajout�e � l'URL avec comme nom x. On obtient ainsi
+* par exemple : mapage.php?x=HKVSkS6t
+*
+* @param	string 	$url		D�but de l'url (ex : mapage.php)
+* @param	mixed 	$x		Param�tres de l'url. Ils sont d'un nombre ind�termin�
+* @global	string	RC4_SIGNE	Signature de cryptage
+* @global	string	RC4_CLE		Cle de cryptage
+*
+* @return string	URL crypt�e
+*/
+function makeURL($url, $x) {
+	$params = RC4_SIGNE;
+	$args = func_get_args();
+	for($i = 1, $iMax = count($args); $i < $iMax; $i ++) {
+		$params .= '|'.$args[$i];
+	}
+	$params = doRC4($params, RC4_CLE);
+
+	return $url.'?x='.rawurlencode(base64_encode($params));
+
+}
+
+
+//_____________________________________________________________________________
+/**
+ * D�cryptage d'un param�tre GET et renvoi des valeurs contenues
+ *
+ * Cette fonction est en quelque sorte l'inverse de de fp_makeURL.
+ * Elle r�cup�re la vairable $_GET['x'], la d�crypte, v�rifie la signature
+ * puis renvoie les diff�rentes valeurs trouv�es sous la forme d'un tableau.
+ * Le script est arr�t� si
+ * - le param�tre x est absent
+ * - la signature n'est pas bonne
+ * - il n'y a pas plus de une valeur
+ *
+ * @global	array	$_GET['x']	Param�tre de la page
+ *
+ * @return	mixed	Si plusieurs valeurs renvoie un tableau, sinon un scalaire
+ */
+function getURL() {
+	if (!isset($_GET['x'])) {
+		exit((IS_DEBUG) ? 'Erreur GET - '.__LINE__ : '');
+	}
+
+	$params = rawurldecode(base64_decode($_GET['x']));
+	$params = doRC4($params, RC4_CLE);
+	$params = explode('|', $params);
+
+	if (count($params) < 2) {
+		exit((IS_DEBUG) ? 'Erreur GET - '.__LINE__ : '');
+	}
+	if ($params[0] != RC4_SIGNE) {
+		exit((IS_DEBUG) ? 'Erreur GET - '.__LINE__ : '');
+	}
+
+	array_shift($params);
+
+	// Si plusieurs valeurs on renvoie un tableau avec les valeurs
+	if (count($params) > 1) {
+		return $params;
+	}
+	// Si une seule valeur on renvoie cette valeur uniquement
+	return $params[0];
+}
+
+
+/////////////////////////////////////////
+//                  FIN                //
+//                  URL                //
+/////////////////////////////////////////
+/////////////////////////////////////////
 
 ?>

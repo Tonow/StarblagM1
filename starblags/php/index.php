@@ -57,42 +57,42 @@ echo "<!-- BLOC HIT PARADE -->
 /*
 * Les Trois blog les plus visiter
 **/
-if ($stmtNbVisite = mysqli_prepare($bd, $queryNbVisite)) {
 
-    //Exécution de la requête
-    mysqli_stmt_execute($stmtNbVisite);
-
-    //Association des variables de résultat
-    mysqli_stmt_bind_result($stmtNbVisite, $bvIDBlog, $nbVisite, $blID, $blTitre);
-
-		echo "
-		<table>
-			<tr>
-				<td style='padding: 0' colspan='2'>
-					<h3>Les 3 blogs les plus visit�s</h3>
-				</td>
-			</tr>";
+echo "
+<table>
+	<tr>
+		<td style='padding: 0' colspan='2'>
+			<h3>Les 3 blogs les plus visités</h3>
+		</td>
+	</tr>";
 
 
-		$contPlusVisit = 0;
-    // Lecture des valeurs
-    while (mysqli_stmt_fetch($stmtNbVisite) && $contPlusVisit<3) {
+if ($resulta = mysqli_query($GLOBALS['bd'], $queryNbVisite)) {
 
-				echo "
-				<tr>
-					<td>
-						<a href='article/articles_voir.php?id=$bvIDBlog'>$blTitre</a>
-					</td>
-					<td>$nbVisite</td>
-				</tr>";
-				$contPlusVisit++;
-			}
+	/* Récupère un tableau associatif */
+	while ($enr = mysqli_fetch_assoc($resulta)) {
 
-			echo "</table>";
+	$url = makeURL('article/articles_voir.php', $enr['blID']);
+	htmlProteger($enr);
 
-			//Fermeture de la commande
-			mysqli_stmt_close($stmtNbVisite);
-		}
+	echo '
+	<tr>
+		<td>
+			<a href="',$url,'">',$enr['blTitre'],'</a>
+		</td>
+		<td>',$enr['Nbvisite'],'</td>
+	</tr>';
+
+	}
+	/* Libération des résultats */
+mysqli_free_result($resulta);
+}
+else {
+	bdErreurRequet($queryNbVisite);
+	}
+echo "</table>";
+
+
 /*
 * FIN --> Les Trois blog les plus visiter
 *
