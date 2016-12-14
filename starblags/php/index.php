@@ -29,11 +29,12 @@ bdConnection();
 * Liste requete SQL
 * Elle se trouve dans bibli_requets_sql.php
 **/
-$queryListBlog = queryListBlog();
 
 $queryNbVisite = queryNbVisite();
 
 $queryNoteArticle = queryNoteArticle();
+
+$queryListBlog = queryListBlog();
 /*
 * FIN --> Liste requete SQL
 **/
@@ -80,7 +81,7 @@ if ($stmtNbVisite = mysqli_prepare($bd, $queryNbVisite)) {
 				echo "
 				<tr>
 					<td>
-						<a href='article/articles_voir.php'>$blTitre</a>
+						<a href='article/articles_voir.php?id=$bvIDBlog'>$blTitre</a>
 					</td>
 					<td>$nbVisite</td>
 				</tr>";
@@ -108,7 +109,7 @@ if ($stmtNoteArticle = mysqli_prepare($bd, $queryNoteArticle)) {
     mysqli_stmt_execute($stmtNoteArticle);
 
     //Association des variables de résultat
-    mysqli_stmt_bind_result($stmtNoteArticle, $anIDArticle, $somNoteArticle, $arTitre);
+    mysqli_stmt_bind_result($stmtNoteArticle, $anIDArticle, $somNoteArticle, $arTitre , $idBlog);
 
 		echo "
 		<table>
@@ -128,7 +129,7 @@ if ($stmtNoteArticle = mysqli_prepare($bd, $queryNoteArticle)) {
 				echo "
 				<tr>
 					<td>
-						<a href='article/articles_voir.php'>$arTitre</a>
+						<a href='article/articles_voir.php?id=$idBlog'>$arTitre</a>
 					</td>
 					<td>
 						<div class='classement'>$somNoteArticle</div>

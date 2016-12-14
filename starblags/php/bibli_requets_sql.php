@@ -30,7 +30,7 @@ function queryNbVisite(){
 
 
 function queryNoteArticle(){
-  $queryNoteArticle = "SELECT articles_notes.anIDArticle, SUM(articles_notes.anNote) AS somNoteArticle, articles.arTitre
+  $queryNoteArticle = "SELECT articles_notes.anIDArticle, SUM(articles_notes.anNote) AS somNoteArticle, articles.arTitre , articles.arIDBlog
   										FROM articles_notes
   										JOIN articles ON articles.arID = articles_notes.anIDArticle
   										GROUP BY articles_notes.anIDArticle
