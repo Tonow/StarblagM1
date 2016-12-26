@@ -31,11 +31,12 @@ function queryNbVisite(){
 
 
 function queryNoteArticle(){
-  $queryNoteArticle = "SELECT articles_notes.anIDArticle, SUM(articles_notes.anNote) AS somNoteArticle, articles.arTitre , articles.arIDBlog
-  										FROM articles_notes
-  										JOIN articles ON articles.arID = articles_notes.anIDArticle
-  										GROUP BY articles_notes.anIDArticle
-  										ORDER BY somNoteArticle  DESC";
+  $queryNoteArticle = "SELECT anIDArticle, SUM(anNote) AS somNoteArticle, arTitre , arIDBlog
+  										FROM articles_notes, articles
+  										WHERE arID = anIDArticle
+  										GROUP BY anIDArticle
+  										ORDER BY somNoteArticle  DESC
+                      LIMIT 3";
   return $queryNoteArticle;
 }
 

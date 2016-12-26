@@ -11,10 +11,20 @@ $niveauDossier = 2;
 $dossier = niveauDossier($niveauDossier);
 
 
-$id = $_GET["id"]; // TODO XXX probleme id si on l'utilise avec 3 blog les plus visité et 3 article les mieux noté
-$id = (int)$id;
+$tmp = getURL();
+$iMax = count($tmp);
+if ($iMax < 2) {
+	exit((IS_DEBUG) ? 'Erreur GET - '.__LINE__.' - '.basename(__FILE__): '');
+}
+$id = (int) $tmp[0];
+$IDArticle = (int) $tmp[1];
+$IDPage = ($iMax > 2) ? (int) $tmp[2] : 0;	// Paramètre facultatif
+$aMJ = ($iMax > 3) ? (int) $tmp[3] : 0;	// Paramètre facultatif
 
-//echo "l'id est = $id";
+
+//$id = $_GET["id"]; // TODO XXX probleme id si on l'utilise avec 3 blog les plus visité et 3 article les mieux noté
+//$id = (int)$id;
+
 
 
 firstHtml();
