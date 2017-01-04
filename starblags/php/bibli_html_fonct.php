@@ -9,11 +9,11 @@
 function footerGlobal(){
   echo <<<FOOTER
   <div id="blcPied">
-		StarBlagS est une marque d�pos�e appartenant � la soci�t� PTICON(PiaT International Corporation Original Network)
+		StarBlagS est une marque déposée appartenant à la société PTICON(PiaT International Corporation Original Network)
 		<br>&nbsp;
 		<br>
 		<a href="#" onclick="alert('Faux lien !'); return false;">Contactez-nous</a> -
-		<a href="#" onclick="alert('Faux lien !'); return false;">Informations l�gales</a> -
+		<a href="#" onclick="alert('Faux lien !'); return false;">Informations l égales</a> -
 		<a href="#" onclick="alert('Faux lien !'); return false;">Conditions d utilisation</a>
 	</div>
 	<!-- FIN DU BLOC PIED -->
@@ -37,7 +37,7 @@ function blocBandeau($dossier){
 			<label for="txtPasse">Passe</label>
 			<input type="password" name="txtPasse" id="txtPasse" value="">
 			<input type="submit" name="btnLogin" value="Mon blog" class="bouton">
-			<input type="submit" name="btnNouveau" value="Cr�er un blog" class="bouton">
+			<input type="submit" name="btnNouveau" value="Créer un blog" class="bouton">
 		</form>
 		<a href="$dossier/php/">
 			<img src="$dossier/images/logo.gif" title="Accueil StarBlagS" width="104" height="67">

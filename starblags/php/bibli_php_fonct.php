@@ -142,6 +142,20 @@ function htmlProteger(&$tab) {
 }
 
 
+/**
+ * Protection d'une cha�ne de caract�res pour un affichage HTML
+ *
+ * @param	string	$texte	Texte � prot�ger
+ * @param	boolean	$bR		TRUE si remplacement des saut de ligne par le tag <br>
+ *
+ * @return	string	Code HTML g�n�r�
+ */
+function fp_protectHTML($texte, $bR = FALSE) {
+	return ($bR) ? nl2br(htmlentities($texte, ENT_COMPAT, 'ISO-8859-1'))
+				: htmlentities($texte, ENT_COMPAT, 'ISO-8859-1');
+}
+
+
 /////////////////////////////////////////
 //                  FIN                //
 //                  BDD                //

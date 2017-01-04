@@ -171,8 +171,8 @@ echo "</div>
 
 if ($stmtListBlog = mysqli_query($GLOBALS['bd'],$queryListBlog)){
 	while ($enr = mysqli_fetch_assoc($stmtListBlog)) {
-		$dateFormat = dateBlogToDate($enr['blDate']); // formater la date
-		$url = makeURL('article/articles_voir.php', $enr['blID'],0);
+		$dateFormat = fp_protectHTML($enr['blDate']); // formater la date
+		$url = makeURL('article/articles_voir.php', fp_protectHTML($enr['blID']),0);
 
 		echo '
 		<div id="blcContenu">
@@ -180,13 +180,13 @@ if ($stmtListBlog = mysqli_query($GLOBALS['bd'],$queryListBlog)){
 			<!-- BLOCS BLOG -->
 			<div class="blcBlog">
 				<h3>
-					<span class="blogAuteur">'.$enr['blAuteur'].' - '.$dateFormat.'</span>
-					'.$enr['blTitre'].'
+					<span class="blogAuteur">'.fp_protectHTML($enr['blAuteur']).' - '.$dateFormat.'</span>
+					'.fp_protectHTML($enr['blTitre']).'
 				</h3>
-				<p>'.$enr['blResume'].'</p>
+				<p>'.fp_protectHTML($enr['blResume']).'</p>
 				<p class="petit">
-					<a class="blogLienArticle" href="'.$url.' '.$enr['blTitre'].'">
-					'.$enr['blNbArticlesPage'].' articles
+					<a class="blogLienArticle" href="'.$url.' '.fp_protectHTML($enr['blTitre']).'">
+					'.fp_protectHTML($enr['blNbArticlesPage']).' articles
 					</a>
 					- ',$dateFormat,'   <!-- XXX TODO A Modifier avec la date du dernier article -->
 				</p>

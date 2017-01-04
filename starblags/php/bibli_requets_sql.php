@@ -17,8 +17,6 @@ function querySingleBlog($id){
 }
 
 
-
-
 function queryNbVisite(){
   $queryNbVisite = "SELECT COUNT(bvIDBlog) AS Nbvisite, blID, blTitre
   							FROM blogs_visites , blogs
@@ -39,6 +37,5 @@ function queryNoteArticle(){
                       LIMIT 3";
   return $queryNoteArticle;
 }
-
 
  ?>
