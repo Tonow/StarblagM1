@@ -9,10 +9,9 @@ function queryListBlog(){
 
 function querySingleBlog($id){
   //echo "l'id dans la query  est = $id<br>";
-  $querySingleBlog = "SELECT blogs.blTitre, blogs.blResume, blogs.blAuteur  , COUNT(blogs_visites.bvIDBlog) , blogs.blNbArticlesPage ,blogs.blPhoto ,blogs.blDate
-                      FROM blogs
-                      JOIN blogs_visites ON blogs.blID = blogs_visites.bvIDBlog
-                      WHERE blogs.blID = $id";
+  $querySingleBlog = "SELECT blTitre, blResume, blAuteur  , COUNT(bvIDBlog) AS Nbvisite , blNbArticlesPage ,blPhoto ,blDate
+                      FROM blogs , blogs_visites
+                      WHERE blID = bvIDBlog AND blID = $id ";
   return $querySingleBlog;
 }
 

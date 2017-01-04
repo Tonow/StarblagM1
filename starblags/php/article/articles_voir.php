@@ -53,45 +53,38 @@ $querySingleBlog = querySingleBlog($id);
 /*
 * Presentation blog
 **/
-if ($stmtPresenteBlog = mysqli_prepare($bd, $querySingleBlog)) {
+if ($stmtPresenteBlog = mysqli_query($GLOBALS['bd'], $querySingleBlog)) {
 
-    //Exécution de la requête
-    mysqli_stmt_execute($stmtPresenteBlog);
+	while ($enr = mysqli_fetch_assoc($stmtPresenteBlog)) {
+		$dateFormat = dateBlogToDate(fp_protectHTML($enr['blDate'])); // formater la date
 
-    //Association des variables de résultat
-    mysqli_stmt_bind_result($stmtPresenteBlog, $blTitre, $blResume, $blAuteur , $nbVisiteBlog , $blNbArticlesPage ,$blPhoto , $blDate);
 
-		$blDate = dateBlogToDate($blDate); // formate la date
 
-		while (mysqli_stmt_fetch($stmtPresenteBlog)) {
-
-		}
-
-		//echo "$blTitre, $blResume, $blAuteur , $nbVisiteBlog , $blNbArticlesPage ,$blPhoto , $blDate";
-
-		echo "
-		<div id='blcContenu'>
-			<!-- BLOC DESCRIPTION BLOG -->
-			<div class='blcBlog'>
-				<h1>$blTitre</h1>
-				<img src='../../upload/$id.$blPhoto' hspace='5' align='right'>
-				<ul>
-					<li style='margin-bottom: 12px;'>$blResume</li>
-					<li> Auteur : $blAuteur</li>
-					<li>Nombre de visites : $nbVisiteBlog depuis le $blDate</li>
-					<li>Nombre d articles : $blNbArticlesPage (derni�re publication le 12/09/2010)</li>
-				</ul>
-				<div class='blcLiens'>
-				 	<a href='php/mail.php' class='blogLienMail'>M envoyer un mail � chaque nouvel article</a>
-				 	<a href='php/flux.php' class='blogLienFlux'>M abonner au flux</a>
+			echo '
+			<div id="blcContenu">
+				<!-- BLOC DESCRIPTION BLOG -->
+				<div class="blcBlog">
+					<h1>'.fp_protectHTML($enr['blTitre']).'</h1>
+					<img src="../../upload/'.$id.'.'.$enr['blPhoto'].'" hspace="5" align="right">
+					<ul>
+						<li style="margin-bottom: 12px;">'.fp_protectHTML($enr['blResume']).'</li>
+						<li> Auteur : '.fp_protectHTML($enr['blAuteur']).'</li>
+						<li>Nombre de visites : '.fp_protectHTML($enr['Nbvisite']).' depuis le '.$dateFormat.'</li>
+						<li>Nombre d articles : '.fp_protectHTML($enr['blNbArticlesPage']).' (derniére publication le 12/09/2010)</li>
+					</ul>
+					<div class="blcLiens">
+					 	<a href="php/mail.php" class="blogLienMail">M envoyer un mail à chaque nouvel article</a>
+					 	<a href="php/flux.php" class="blogLienFlux">M abonner au flux</a>
+					</div>
 				</div>
-			</div>
-			</div>";
+				</div>';
 
-
-			//Fermeture de la commande
-			mysqli_stmt_close($stmtPresenteBlog);
-		}
+	}
+	mysqli_free_result($stmtPresenteBlog);
+}
+else {
+	bdErreurRequet($querySingleBlog);
+}
 /*
 * FIN --> Presentation blog
 *
