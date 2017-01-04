@@ -168,47 +168,37 @@ echo "</div>
 * Liste des blog*
 ***************************************
 **/
-if ($stmtListBlog = mysqli_prepare($bd, $queryListBlog)) {
 
-	/* Exécution de la requête */
-	mysqli_stmt_execute($stmtListBlog);
+if ($stmtListBlog = mysqli_query($GLOBALS['bd'],$queryListBlog)){
+	while ($enr = mysqli_fetch_assoc($stmtListBlog)) {
+		$dateFormat = dateBlogToDate($enr['blDate']); // formater la date
+		$url = makeURL('article/articles_voir.php', $enr['blID'],0);
 
-	/* Association des variables de résultat */
-	mysqli_stmt_bind_result($stmtListBlog, $idBlog , $titre, $auteur, $date , $resume , $nb_articles_page);
+		echo '
+		<div id="blcContenu">
 
+			<!-- BLOCS BLOG -->
+			<div class="blcBlog">
+				<h3>
+					<span class="blogAuteur">'.$enr['blAuteur'].' - '.$dateFormat.'</span>
+					'.$enr['blTitre'].'
+				</h3>
+				<p>'.$enr['blResume'].'</p>
+				<p class="petit">
+					<a class="blogLienArticle" href="'.$url.' '.$enr['blTitre'].'">
+					'.$enr['blNbArticlesPage'].' articles
+					</a>
+					- ',$dateFormat,'   <!-- XXX TODO A Modifier avec la date du dernier article -->
+				</p>
+			</div>
+			<!-- FIN BLOCS BLOG -->
 
-	/* Lecture des valeurs */
-	while (mysqli_stmt_fetch($stmtListBlog)) {
-
-		$dateFormat = dateBlogToDate($date); // formate la date
-
-		echo "
-		<div id='blcContenu'>
-
-		<!-- BLOCS BLOG -->
-		<div class='blcBlog'>
-		<h3>
-		<span class='blogAuteur'>$auteur - $dateFormat</span>
-		$titre
-		</h3>
-		<p>$resume</p>
-		<p class='petit'>
-		<a class='blogLienArticle' href='article/articles_voir.php?id=$idBlog' title='$titre'>
-		$nb_articles_page articles
-		</a>
-		- $dateFormat   <!-- XXX TODO A Modifier avec la date du dernier article -->
-		</p>
-		</div>
-		<!-- FIN BLOCS BLOG -->
-
-		</div>
-		";
+		</div>';
 	}
-
-
-
-	/* Fermeture de la commande */
-	mysqli_stmt_close($stmtListBlog);
+	mysqli_free_result($stmtListBlog);
+}
+else {
+	bdErreurRequet($queryListBlog);
 }
 /*
 * FIN --> Liste des blog
