@@ -44,6 +44,8 @@ bdConnection();
 **/
 $querySingleBlog = querySingleBlog($id);
 
+$queryRecupAllArticleFromBlog = queryRecupAllArticleFromBlog($id);
+
 //echo "l'id apres la query  est = $id <br>";
 /*
 * FIN --> Liste requete SQL
@@ -91,113 +93,146 @@ else {
 **/
 
 
-/* Fermeture de la connexion */
-mysqli_close($bd);
 
+/*
+<!--
+ * Affichage du texte d'un article et des images li�es.
+ * Si il n'y a pas d'images li�es, le texte est simplement
+ * affich� � la suite de l'ent�te.
+ * Si il y a des images li�es :
+ * - on utilise un bloc pour les images du haut
+ * - on utilise un bloc pour les images du bas
+ * - pour les images de gauche, de droite et pour le texte
+ * on utilise un tableau. C'est le plus simple pour �viter
+ * des "bidouilles" pour l'alignement vertical des images.
+ *
+ *	 ____________________________________________________
+ *  | bloc ent�te                                        |
+ *  |____________________________________________________|
+ *  | bloc image haut (si n�cessaire)                    |
+ *  |____________________________________________________|
+ *   ____________________________________________________
+ *  | cellule |  texte                         | cellule |
+ *  | images  |                                | images  |
+ *  | gauche  |                                | droite  |
+ *  | ________|________________________________|_________|
+ *   ____________________________________________________
+ *  | bloc image bas (si n�cessaire)                     |
+ *  |____________________________________________________|
+ *   ____________________________________________________
+ *  | bloc liens commentaire, note, etc.                 |
+ *  |____________________________________________________|
+ *
+ *
+ -->
+*/
 
-echo <<<ARTICLE1
-	<div id="blcContenu">
+if ($AllArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupAllArticleFromBlog)) {
+	echo "<div id='blcContenu'>";
 
+	while ($enr = mysqli_fetch_assoc($AllArticleFromBlog)) {
+		$dateFormat = dateBlogToDate(fp_protectHTML($enr['arDate'])); // formater la date
+
+		echo '
 		<!-- BLOC ARTICLE -->
-		<!--
-		 * Affichage du texte d'un article et des images li�es.
-		 * Si il n'y a pas d'images li�es, le texte est simplement
-		 * affich� � la suite de l'ent�te.
-		 * Si il y a des images li�es :
-		 * - on utilise un bloc pour les images du haut
-		 * - on utilise un bloc pour les images du bas
-		 * - pour les images de gauche, de droite et pour le texte
-		 * on utilise un tableau. C'est le plus simple pour �viter
-		 * des "bidouilles" pour l'alignement vertical des images.
-		 *
-		 *	 ____________________________________________________
-		 *  | bloc ent�te                                        |
-		 *  |____________________________________________________|
-		 *  | bloc image haut (si n�cessaire)                    |
-		 *  |____________________________________________________|
-		 *   ____________________________________________________
-		 *  | cellule |  texte                         | cellule |
-		 *  | images  |                                | images  |
-		 *  | gauche  |                                | droite  |
-		 *  | ________|________________________________|_________|
-		 *   ____________________________________________________
-		 *  | bloc image bas (si n�cessaire)                     |
-		 *  |____________________________________________________|
-		 *   ____________________________________________________
-		 *  | bloc liens commentaire, note, etc.                 |
-		 *  |____________________________________________________|
-		 *
-		 *
-		 -->
+
  		<div class="blcArticle">
  			<h2>
- 				<span class="articleDate">07/08/2006 - 16:10</span>
-				Le premier jour
- 			</h2>
- 			<!--  BLOC PHOTO HAUT -->
-			<div class="articlePhotoH">
-				<div class="articlePhoto">
-					<img src="../../upload/1_1.gif">
-					<br>L&eacute;gende
-				</div>
-			</div>
+ 				<span class="articleDate">'.$dateFormat.' - '.$enr['arHeure'].'</span>
+				'.fp_protectHTML($enr['arTitre']).'
+ 			</h2>';
+
+			if ($enr['phPlace'] == 0 ) {
+
+				echo '
+				<!--  BLOC PHOTO HAUT -->
+				<div class="articlePhotoH">
+					<div class="articlePhoto">
+						<img src="../../upload/'.$enr['phIDArticle'].'_'.$enr['phNumero'].'.'.$enr['phExt'].'">
+						<br>'.fp_protectHTML($enr['phLegende']).'
+					</div>
+				</div>';
+			}
+
+ 			echo "
 			<!-- TABLE PHOTO GAUCHE / TEXTE / PHOTO DROITE -->
 			<table>
-				<tr>
-					<td>
-						<div class="articlePhoto">
-							<img src="../../upload/1_1.gif">
-							<br>L&eacute;gende
-						</div>
-					</td>
+				<tr>";
+
+					if ($enr['phPlace'] == 1 ) {
+
+						echo '
+						<td>
+							<div class="articlePhoto">
+								<img src="../../upload/'.$enr['phIDArticle'].'_'.$enr['phNumero'].'.'.$enr['phExt'].'">
+								<br>'.fp_protectHTML($enr['phLegende']).'
+							</div>
+						</td>';
+					}
+
+					echo '
 					<td valign="top">
-						<p>Je travaille dans l'informatique depuis <strong>1983</strong>. </p>
-						<p>Jusqu'en <strong>1993</strong>, j'ai &eacute;t&eacute; <strong>chef
-						de projets</strong> dans une <strong>SSII</strong> : <br>
-						- <strong>analyse</strong> et r&eacute;daction des <strong>dossiers de
-						d&eacute;veloppement</strong> et de sp&eacute;cifications techniques
-						&agrave; destination des clients et des autres d&eacute;veloppeurs de
-						l&rsquo;&eacute;quipe, <br>
-						- <strong>d&eacute;veloppement d&rsquo;applications</strong> commerciales
-						en Basic, Cobol, C, L4G divers, bases de donn&eacute;es relationnelles
-						(Oracle, Informix), langages SQL, pour des PME-PMI, <br>
-						- <strong>installation </strong>du mat&eacute;riel chez les clients, <br>
-						- <strong>formation</strong> aux logiciels d&eacute;velopp&eacute;s
-						</p>
-					</td>
-					<td>
-						<div class="articlePhoto">
-							<img src="../../upload/1_1.gif">
-							<br>L&eacute;gende
-						</div>
-					</td>
+						'.$enr['arTexte'].'
+					</td>';
+
+
+					if ($enr['phPlace'] == 3 ) {
+
+						echo '
+						<td>
+							<div class="articlePhoto">
+								<img src="../../upload/'.$enr['phIDArticle'].'_'.$enr['phNumero'].'.'.$enr['phExt'].'">
+								<br>'.fp_protectHTML($enr['phLegende']).'
+							</div>
+						</td>';
+					}
+
+				echo "
 				</tr>
-			</table>
-			<!-- BLOC PHOTO BAS -->
-			<div class="articlePhotoH">
-				<div class="articlePhoto">
-					<img src="../../upload/1_1.gif">
-					<br>L&eacute;gende
-				</div>
-			</div>
+			</table>";
+
+
+			if ($enr['phPlace'] == 2 ) {
+
+				echo '
+				<!-- BLOC PHOTO BAS -->
+				<div class="articlePhotoH">
+					<div class="articlePhoto">
+						<img src="../../upload/'.$enr['phIDArticle'].'_'.$enr['phNumero'].'.'.$enr['phExt'].'">
+						<br>'.fp_protectHTML($enr['phLegende']).'
+					</div>
+				</div>';
+			}
+
+			echo '
 			<!-- BLOC LIENS -->
 			<div class="blcLiens">
-				<a href="comment_voir.php" class="articleLienCom">2 commentaires</a>
+				<a href="comment_voir.php" class="articleLienCom">'.$enr['arComment'].' commentaires</a>
 				<a href="comment_ajout.php" class="articleLienComAjout">ajouter un commentaire</a>
 				<a class="articleNote">10</a>
 				<a href="article_noter.php" class="articleLienNoteAjout">noter</a>
 			</div>
  		</div>
-		<!-- FIN BLOC ARTICLE -->
+		<!-- FIN BLOC ARTICLE -->';
+	}
+}
+
+
+
+
+echo '
 
 		<div id="blcPagination">
-			Articles 1 � 2 sur 6<br>
+			Articles 1 à 2 sur 6<br>
 			Page <span id="pageEnCours">1</span><a href="articles_voir.php">2</a>
 			<a href="articles_voir.php">3</a>
 		</div>	<!-- FIN BLOC PAGINATION -->
 
-	</div>  <!-- FIN DU BLOC PAGE -->
-ARTICLE1;
+	</div>  <!-- FIN DU BLOC PAGE -->';
+
+
+/* Fermeture de la connexion */
+mysqli_close($bd);
 
 footerGlobal();
 

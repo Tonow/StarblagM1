@@ -125,7 +125,7 @@ if ($stmtNoteArticle = mysqli_query($GLOBALS['bd'], $queryNoteArticle)) {
 		htmlProteger($enr);
 
 
-		$url = makeURL('article/articles_voir.php', $enr['anIDArticle'],1);
+		$url = makeURL('article/articles_voir.php', $enr['arIDBlog'] , 0 , $enr['anIDArticle'],1);
 
 		echo '
 		<tr>
@@ -171,7 +171,7 @@ echo "</div>
 
 if ($stmtListBlog = mysqli_query($GLOBALS['bd'],$queryListBlog)){
 	while ($enr = mysqli_fetch_assoc($stmtListBlog)) {
-		$dateFormat = fp_protectHTML($enr['blDate']); // formater la date
+		$dateFormat = dateBlogToDate(fp_protectHTML($enr['blDate'])); // formater la date
 		$url = makeURL('article/articles_voir.php', fp_protectHTML($enr['blID']),0);
 
 		echo '

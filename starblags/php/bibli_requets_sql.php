@@ -37,4 +37,13 @@ function queryNoteArticle(){
   return $queryNoteArticle;
 }
 
+
+function queryRecupAllArticleFromBlog($idBlog){
+  $queryRecupAllArticleFromBlog = "SELECT *
+                                  FROM articles , photos
+                                  WHERE arIDBlog = $idBlog AND phIDArticle = arID
+                                  ORDER BY arID ASC";
+  return $queryRecupAllArticleFromBlog;
+}
+
  ?>
