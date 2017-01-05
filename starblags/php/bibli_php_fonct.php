@@ -127,6 +127,46 @@ function bdErreurRequet($sql) {
 
 
 
+//___________________________________________________________________
+/**
+ * Arr�t du script si erreur base de donn�es.
+ * La fonction arr�te le script, avec affichage de message d'erreur
+ * si on est en phase de d�veloppement.
+ *
+ * @param string    $msg    Message affich� ou stock�.
+ */
+function fp_bdErreurExit($msg) {
+	ob_end_clean();     // Supression de tout ce qui a pu �tre d�ja g�n�r�
+
+	// Si on est en phase de d�bugage, on affiche le message d'erreur
+	// et on arr�te le script.
+	if (IS_DEBUG) {
+		echo '<!DOCTYPE html><html><head><meta charset="ISO-8859-1"><title>',
+			'Erreur base de donn�es</title></head><body>',
+			$msg,
+			'</body></html>';
+		exit();				// Sortie : fin du script
+	}
+
+	// Si on est en phase de production on stocke les
+	// informations de d�buggage dans un fichier d'erreurs
+	// et on affiche un message sibyllin.
+	$buffer = date('d/m/Y H:i:s')."\n$msg\n";
+	error_log($buffer, 3, 'erreurs_bd.txt');
+
+	// Dans un vrai site, il faudrait faire une page avec
+	// la ligne graphique du site. Pas fait ici pour simplifier.
+	echo '<!DOCTYPE html><html><head><meta charset="ISO-8859-1"><title>',
+			'Starblags</title></head><body>',
+			'<h1>Stablags est overbook&eacute;</h1>,
+			<h3>Merci de r&eacute;essayez dans un moment</h3>',
+			'</body></html>';
+	exit();				// Sortie : fin du script
+}
+
+
+
+
 /**
  * Protection HTML des chaînes contenues dans un tableau
  * Le tableau est passé par référence.
@@ -163,38 +203,8 @@ function fp_protectHTML($texte, $bR = FALSE) {
 /////////////////////////////////////////
 
 
-/**
- * Donne en fonction du niveau dans le quelle se trouve le fichier l'ecriture du chemin qui permet de le retrouver
- * dans la hierachie de dossiers
- *
- * @param int $niveauDossier donne quelle est le niveau du fichier dans la hierachei des dossiers
- *
- * @return string $signeNiveau est la chaine qui caracterise la profondeur du dossier en fonction du nb de repetition de ../
- */
-function niveauDossier($niveauDossier){
-  $signeNiveau = str_repeat("../", $niveauDossier);
-  $signeNiveau = substr($signeNiveau, 0, -1);;
 
-  return $signeNiveau;
-}
 
-/**
- * Transforme la date formater par la base de donné AAAAMMJJ en format pour le site JJ/MM/AAAA
- *
- * @param string $dateBlog date recupere de la base de donnée : AAAAMMJJ
- *
- * @return string $date la date formaté pour le site : JJ/MM/AAAA
- */
-function dateBlogToDate($dateBlog){
-  $annee = substr($dateBlog, 0, 4);
-  $mois = substr($dateBlog, 4, 2);
-  $jour = substr($dateBlog, 6, 2);
-//echo "$dateBlog";
-
-  $date = "$jour/$mois/$annee";
-
-  return $date;
-}
 
 
 /////////////////////////////////////////
@@ -332,5 +342,86 @@ function getURL() {
 //                  URL                //
 /////////////////////////////////////////
 /////////////////////////////////////////
+
+
+
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+//                DIVERS               //
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+
+
+/**
+ * Donne en fonction du niveau dans le quelle se trouve le fichier l'ecriture du chemin qui permet de le retrouver
+ * dans la hierachie de dossiers
+ *
+ * @param int $niveauDossier donne quelle est le niveau du fichier dans la hierachei des dossiers
+ *
+ * @return string $signeNiveau est la chaine qui caracterise la profondeur du dossier en fonction du nb de repetition de ../
+ */
+function niveauDossier($niveauDossier){
+  $signeNiveau = str_repeat("../", $niveauDossier);
+  $signeNiveau = substr($signeNiveau, 0, -1);;
+
+  return $signeNiveau;
+}
+
+/**
+ * Transforme la date formater par la base de donné AAAAMMJJ en format pour le site JJ/MM/AAAA
+ *
+ * @param string $dateBlog date recupere de la base de donnée : AAAAMMJJ
+ *
+ * @return string $date la date formaté pour le site : JJ/MM/AAAA
+ */
+function dateBlogToDate($dateBlog){
+  $annee = substr($dateBlog, 0, 4);
+  $mois = substr($dateBlog, 4, 2);
+  $jour = substr($dateBlog, 6, 2);
+//echo "$dateBlog";
+
+  $date = "$jour/$mois/$annee";
+
+  return $date;
+}
+
+/**
+ * R�cup�ration de l'adresse IP du visiteur
+ *
+ * @return	string	Adresse Ip du visiteur ou '' si impossible � d�terminer
+ */
+function fp_getIP() {
+    $iP = '';
+    $proxys = array('HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED',
+                    'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED',
+                    'HTTP_VIA', 'HTTP_X_COMING_FROM',
+                    'HTTP_COMING_FROM', 'REMOTE_ADDR');
+
+    foreach($proxys as $prox) {
+        if (isset($_SERVER[$prox])) {
+            $iP = $_SERVER[$prox];
+            break;
+        }
+    }
+
+    $ok = preg_match('/^[0-9]{1,3}(.[0-9]{1,3}){3,3}/', $iP, $exps = array());
+
+    if($ok && (count($exps) > 0)) {
+    	return $exps[0];
+    }
+
+    return '';
+}
+
+
+
+/////////////////////////////////////////
+//                  FIN                //
+//                 DIVERS              //
+/////////////////////////////////////////
+/////////////////////////////////////////
+
 
 ?>

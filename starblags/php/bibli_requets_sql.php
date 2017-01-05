@@ -1,5 +1,6 @@
 <?php
 
+
 function queryListBlog(){
   $queryListBlog = "SELECT blID , blTitre, blAuteur, blDate , blResume , blNbArticlesPage
   									FROM blogs
@@ -38,12 +39,48 @@ function queryNoteArticle(){
 }
 
 
-function queryRecupAllArticleFromBlog($idBlog){
+function queryRecupArticleFromBlog($idBlog , $tri=ASC , $posDebut , $nb){
+  $queryRecupAllArticleFromBlog = "SELECT *
+                                   FROM articles , photos
+                                   WHERE arIDBlog = $idBlog
+                                    AND phIDArticle = arID
+                                   ORDER BY arDate $tri , arHeure $tri
+                                   LIMIT $posDebut, $nb";
+  return $queryRecupAllArticleFromBlog;
+}
+
+
+function queryRecupArticleFromBlog2($idBlog){
   $queryRecupAllArticleFromBlog = "SELECT *
                                   FROM articles , photos
                                   WHERE arIDBlog = $idBlog AND phIDArticle = arID
                                   ORDER BY arID ASC";
   return $queryRecupAllArticleFromBlog;
 }
+
+
+
+// On met � jour le compteur de visites du blog
+function majBlogVisiteNow($idBlog , $ip){
+  $sql = "INSERT INTO blogs_visites SET
+  		bvIDBlog = $idBlog,
+  		bvDate = ".date('Ymd').",
+  		bvHeure = '".date('H:i:s')."',
+  		bvIP = '".$ip."'";
+  return $sql;
+}
+
+
+// R�cup�ration des infos sur le blog affich�
+function infoBlog($idBlog){
+  $sql = "SELECT blogs.*, count( arID ) AS NbArticles, max( arDate ) AS Dernier
+  		FROM blogs, articles
+  		WHERE blID = $idBlog
+  		AND arIDBlog = blID
+  		AND arPublier = 1
+  		GROUP BY 1";
+  return $sql;
+}
+
 
  ?>

@@ -16,7 +16,7 @@ $iMax = count($tmp);
 if ($iMax < 2) {
 	exit((IS_DEBUG) ? 'Erreur GET - '.__LINE__.' - '.basename(__FILE__): '');
 }
-$id = (int) $tmp[0];
+$idBl = (int) $tmp[0];
 $IDArticle = (int) $tmp[1];
 $IDPage = ($iMax > 2) ? (int) $tmp[2] : 0;	// Paramètre facultatif
 $aMJ = ($iMax > 3) ? (int) $tmp[3] : 0;	// Paramètre facultatif
@@ -25,7 +25,7 @@ $aMJ = ($iMax > 3) ? (int) $tmp[3] : 0;	// Paramètre facultatif
 //$id = $_GET["id"]; // TODO XXX probleme id si on l'utilise avec 3 blog les plus visité et 3 article les mieux noté
 //$id = (int)$id;
 
-
+$ip = fp_getIP();
 
 firstHtml();
 
@@ -42,14 +42,31 @@ bdConnection();
 * Liste requete SQL
 * Elle se trouve dans bibli_requets_sql.php
 **/
-$querySingleBlog = querySingleBlog($id);
+$querySingleBlog = querySingleBlog($idBl);
 
-$queryRecupAllArticleFromBlog = queryRecupAllArticleFromBlog($id);
+$majBlogVisiteNow = majBlogVisiteNow($idBl , $ip);
 
-//echo "l'id apres la query  est = $id <br>";
+$infoBlog = infoBlog($idBl);
+
 /*
 * FIN --> Liste requete SQL
 **/
+
+// Incrementation compteur blog
+$Maj = mysqli_query($GLOBALS['bd'], $majBlogVisiteNow) or bdErreurRequet($majBlogVisiteNow);
+
+
+
+
+// Recuperation information blog
+$InfBlog = mysqli_query($GLOBALS['bd'], $infoBlog) or bdErreurRequet($infoBlog);  // Exécution requéte
+
+$blogs = mysqli_fetch_assoc($InfBlog);	// Récupération de la sélection
+if ($blogs === FALSE) {  // Le blog n'existe pas : redirection sur la page d'accueil
+	header('Location: index.php');
+	exit();
+}
+mysqli_free_result($InfBlog);
 
 
 /*
@@ -67,7 +84,7 @@ if ($stmtPresenteBlog = mysqli_query($GLOBALS['bd'], $querySingleBlog)) {
 				<!-- BLOC DESCRIPTION BLOG -->
 				<div class="blcBlog">
 					<h1>'.fp_protectHTML($enr['blTitre']).'</h1>
-					<img src="../../upload/'.$id.'.'.$enr['blPhoto'].'" hspace="5" align="right">
+					<img src="../../upload/'.$idBl.'.'.$enr['blPhoto'].'" hspace="5" align="right">
 					<ul>
 						<li style="margin-bottom: 12px;">'.fp_protectHTML($enr['blResume']).'</li>
 						<li> Auteur : '.fp_protectHTML($enr['blAuteur']).'</li>
@@ -127,10 +144,19 @@ else {
  -->
 */
 
-if ($AllArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupAllArticleFromBlog)) {
+// Requ�te SQL
+$tri = ($blogs['blTri'] == 0) ? 'ASC' : 'DESC';
+$posDebut = $IDPage * $blogs['blNbArticlesPage'];
+$nbArticleParPage = $blogs['blNbArticlesPage'];
+
+
+$queryRecupArticleFromBlog = queryRecupArticleFromBlog($idBl, $tri , $posDebut, $nbArticleParPage);
+
+
+if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticleFromBlog)) {
 	echo "<div id='blcContenu'>";
 
-	while ($enr = mysqli_fetch_assoc($AllArticleFromBlog)) {
+	while ($enr = mysqli_fetch_assoc($ArticleFromBlog)) {
 		$dateFormat = dateBlogToDate(fp_protectHTML($enr['arDate'])); // formater la date
 
 		echo '
@@ -215,17 +241,38 @@ if ($AllArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupAllArticleFrom
  		</div>
 		<!-- FIN BLOC ARTICLE -->';
 	}
+
+	mysqli_free_result($ArticleFromBlog);
+}
+else {
+	bdErreurRequet($queryRecupArticleFromBlog);
 }
 
 
-
+$nbArticles = $blogs['NbArticles'];
+$nbParPage = $blogs['blNbArticlesPage'];
+$articleDebut = ($IDPage * $nbParPage) + 1;
+$articleFin = ($IDPage * $nbParPage) + $nbParPage;
+if ($articleFin > $nbArticles) {
+	$articleFin = $nbArticles;
+}
 
 echo '
 
 		<div id="blcPagination">
-			Articles 1 à 2 sur 6<br>
-			Page <span id="pageEnCours">1</span><a href="articles_voir.php">2</a>
-			<a href="articles_voir.php">3</a>
+			Articles '.$articleDebut.' à '.$articleFin.' sur '.$nbArticles.'<br>';
+			echo 'Page ';
+			for ($i = 0, $page = 0; $i < $nbArticles; $i += $nbParPage, $page ++) {
+				if ($page == $IDPage) {  // page en cours, pas de lien
+					echo '<span id="pageEnCours">', $page + 1, '</span>';
+				}
+				else {
+					// Les param�tres du lien sont crypt�s (IDBlog|IDArticle|No Page)
+					$url = makeUrl('articles_voir.php', $idBl, 0, $page);
+					echo '<a href="'.$url.'">', $page + 1, '</a>';
+				}
+			}
+		echo '
 		</div>	<!-- FIN BLOC PAGINATION -->
 
 	</div>  <!-- FIN DU BLOC PAGE -->';
