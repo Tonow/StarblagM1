@@ -233,10 +233,25 @@ if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticle)) {
 				</div>';
 			}
 
+
 			echo '
 			<!-- BLOC LIENS -->
-			<div class="blcLiens">
-				<a href="comment_voir.php" class="articleLienCom">'.$enr['NbComments'].' commentaires</a>
+			<div class="blcLiens">';
+			if ($enr['NbComments'] > 0) {
+				// Les param�tres du lien sont crypt�s (IDArticle)
+				$url = makeURL('commentaire_vu.php',$enr['arID']);
+				$url = "javascript:FP.ouvrePopUp('$url')";
+
+				$liensCommentaireVu = '<a href="'.$url.'" class="articleLienCom">'
+				.$enr['NbComments']
+				.( (fp_protectHTML($enr['NbComments']) == 1) ? ' commentaire</a>':' commentaires</a>');
+				echo "$liensCommentaireVu";
+			}
+			else {
+				echo '<a href="comment_voir.php" class="articleLienCom">'.$enr['NbComments'].' commentaires</a>';
+			}
+
+				echo'
 				<a href="comment_ajout.php" class="articleLienComAjout">ajouter un commentaire</a>
 				<a class="articleNote">10</a>
 				<a href="article_noter.php" class="articleLienNoteAjout">noter</a>

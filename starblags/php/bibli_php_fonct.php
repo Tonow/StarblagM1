@@ -298,7 +298,7 @@ function makeURL($url, $x) {
 /**
  * D�cryptage d'un param�tre GET et renvoi des valeurs contenues
  *
- * Cette fonction est en quelque sorte l'inverse de de fp_makeURL.
+ * Cette fonction est en quelque sorte l'inverse de de makeURL.
  * Elle r�cup�re la vairable $_GET['x'], la d�crypte, v�rifie la signature
  * puis renvoie les diff�rentes valeurs trouv�es sous la forme d'un tableau.
  * Le script est arr�t� si

@@ -64,6 +64,7 @@ HEAD1;
 
 		echo <<<HEAD2
 		<link rel="stylesheet" href="$dossier/css/modele_1.css" type="text/css">
+		<script type="text/javascript" src="$dossier/js/bibli.js"></script>
 	</head>
 HEAD2;
 }
@@ -75,10 +76,9 @@ HEAD2;
  * @return void --> le debut html de tout les pages
  */
 function firstHtml(){
-	echo <<<FIRST1
+	echo '
 	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-	<html>
-FIRST1;
+	<html>';
 }
 
 
@@ -92,6 +92,44 @@ function endHtml(){
 	</body>
 	</html>
 	";
+}
+
+
+
+
+/**
+ * Permet de generer le html pour tout les debut des pop-up tout les page en personalisant le titre
+ * et le sousTitre de chaqu'un d'entre eu
+ *
+ * @param string $dossier niveau dans le quelle se trouve le dossier
+ * @param string $titre titre de la page
+ * @param string $sousTitre sous-titre de la page
+ *
+ * @return void --> le debut html des pop-up
+ */
+function firstPop($dossier, $titre= 'titreAchanger' , $sousTitre = 'sousTitreAchanger' ){
+
+	echo '
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+	<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>@_TITLE_@</title>
+		<script type="text/javascript">
+		if (window.opener == null) {
+			document.location.replace("index.php");
+		}
+		</script>
+		<link rel="icon" type="image/gif" href="'.$dossier.'/images/favicon.gif">
+		<link rel="stylesheet" href="'.$dossier.'/css/modele_1.css" type="text/css">
+		<script type="text/javascript" src="'.$dossier.'/js/bibli.js"></script>
+	</head>
+	<body>
+		<div id="blcPopPage">
+			<div id="blcPopBandeau">
+				<div id="blcPopTitre">'.$titre.'</div>
+				</div>
+			<h2>'.$sousTitre.'</h2>';
 }
 
 
