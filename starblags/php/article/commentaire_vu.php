@@ -49,9 +49,15 @@ while ($com = mysqli_fetch_assoc($commentaireArticle)) {
 mysqli_free_result($commentaireArticle);
 //Fin Commentaire de la fenetre pop-up
 
+// On fait un formulaire pour avoir un bouton
+echo '<form name="form1" method="post" action="">';
 
+fp_htmlBoutons(-1, 'B|btnFermer|Fermer|self.close();opener.focus()');
 
-echo "commentaires pop up";
+echo '</form>',
+	'</div>',	// fin du bloc blcPopPage
+	'</body></html>';
+
 
 ob_end_flush();
 

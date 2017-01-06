@@ -40,10 +40,11 @@ function queryNoteArticle(){
 
 
 function queryRecupArticleFromBlog($idBlog , $tri=ASC , $posDebut , $nb){
-  $queryRecupAllArticleFromBlog = "SELECT articles.* ,count(coID) as NbComments , photos.*
+  $queryRecupAllArticleFromBlog = "SELECT articles.* ,count(coID) AS NbComments , photos.* , ROUND(AVG(articles_notes.anNote)) AS NoteMoyenne
                             			FROM articles
                             			LEFT OUTER JOIN commentaires ON commentaires.coIDArticle = articles.arID
                                   JOIN photos ON articles.arID = photos.phIDArticle
+                                  LEFT OUTER JOIN articles_notes ON articles_notes.anID = articles.arID
                             			WHERE arIDBlog = $idBlog
                             			AND arPublier = 1
                             			GROUP BY 1

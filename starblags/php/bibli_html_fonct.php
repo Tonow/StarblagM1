@@ -133,4 +133,74 @@ function firstPop($dossier, $titre= 'titreAchanger' , $sousTitre = 'sousTitreAch
 }
 
 
+
+
+
+
+//_____________________________________________________________________________
+/**
+ * Affiche le code html d'une ligne de boutons de formulaire.
+ *
+ * Cette fonction accepte un nombre variable de param�tres.
+ * Seul le premier est d�fini dans la d�finition de la fonction.
+ * Les param�tres suivants d�finissent les boutons.
+ * La d�finition d'un bouton se fait dans une zone alpha de la forme :
+ *  Type|Nom|Valeur|JavaScript
+ * 	Type	type du bouton
+ * 		S : submit
+ * 		R : reset
+ * 		B : button
+ * 	Nom		nom du bouton  (attribut name)
+ * 	Valeur	valeur du bouton (attribut value)
+ * 	JavaScript	fonction JavaScript pour �v�n�ment onclick
+ *
+ * Exemple : fp_htmlBoutons(2, 'B|btnRetour|Liste des sujets|history.back()', 'S|btnValider|Valider'
+ *
+ * @param	integer	$colspan	Nombre de colonnes de tableau � joindre. Si -1 pas dans un tableau
+ * @param	string	Ind�fini	D�finition d'un bouton. Il peut y avoir
+ * 								autant de d�finitions que d�sir�.
+ */
+function fp_htmlBoutons($colspan) {
+	if ($colspan == -1) {
+		echo '<p align="right">';
+	} else {
+		echo '<tr>',
+				'<td colspan="', $colspan, '">&nbsp;</td>',
+			'</tr>',
+			'<tr>',
+				'<td colspan="'.$colspan.'" align="right">';
+	}
+
+	$nbArg = func_num_args();
+
+	for ($i = 1; $i < $nbArg; $i++) {
+		$bouton = func_get_arg($i);
+		$description = explode('|', $bouton);
+
+		if ($description[0] == 'S') {
+			$description[0] = 'submit';
+		} elseif ($description[0] == 'R') {
+			$description[0] = 'reset';
+		} elseif ($description[0] == 'B') {
+			$description[0] = 'button';
+		} else {
+			continue;
+		}
+
+		if (!isset($description[3])) {
+			$description[3] = '';
+		}
+
+		echo '&nbsp;&nbsp;',
+				'<input type="', $description[0], '" ',
+				'name="', $description[1], '" ',
+				'value="', $description[2], '" ',
+				'class="bouton" ',
+				( ($description[3] == '') ? '>' : 'onclick="'.$description[3].'">');
+	}
+
+	echo ($colspan == -1) ? '</p>' : '</td></tr>';
+}
+
+
 ?>

@@ -9,6 +9,7 @@ require ('../setting.php');
 
 $niveauDossier = 2;
 $dossier = niveauDossier($niveauDossier);
+$MessageNoteNull = "Aucune Note";
 
 
 $tmp = getURL();
@@ -248,12 +249,12 @@ if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticle)) {
 				echo "$liensCommentaireVu";
 			}
 			else {
-				echo '<a href="comment_voir.php" class="articleLienCom">'.$enr['NbComments'].' commentaires</a>';
+				echo '<a class="articleLienCom">'.$enr['NbComments'].' commentaires</a>';
 			}
 
 				echo'
 				<a href="comment_ajout.php" class="articleLienComAjout">ajouter un commentaire</a>
-				<a class="articleNote">10</a>
+				<a class="articleNote">'.((fp_protectHTML($enr['NoteMoyenne'])) === 'NULL' ? '' : $enr['NoteMoyenne']).'</a>
 				<a href="article_noter.php" class="articleLienNoteAjout">noter</a>
 			</div>
  		</div>
