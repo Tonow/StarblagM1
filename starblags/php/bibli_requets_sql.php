@@ -52,6 +52,21 @@ function queryRecupArticleFromBlog($idBlog , $tri=ASC , $posDebut , $nb){
   return $queryRecupAllArticleFromBlog;
 }
 
+function queryNomArticle($IDArticle){
+  $sql = "SELECT arTitre
+          FROM articles
+          WHERE arID = $IDArticle";
+  return $sql;
+}
+
+function queryCommentaireArticle($IDArticle){
+  $sql = "SELECT *
+		      FROM commentaires
+		      WHERE coIDArticle = $IDArticle
+		      ORDER BY coDate, coHeure";
+  return $sql;
+}
+
 
 function queryRecupOneArticle($IDArticle){
   $sql = "SELECT *
