@@ -40,22 +40,27 @@ function queryNoteArticle(){
 
 
 function queryRecupArticleFromBlog($idBlog , $tri=ASC , $posDebut , $nb){
-  $queryRecupAllArticleFromBlog = "SELECT *
-                                   FROM articles , photos
-                                   WHERE arIDBlog = $idBlog
-                                    AND phIDArticle = arID
-                                   ORDER BY arDate $tri , arHeure $tri
-                                   LIMIT $posDebut, $nb";
+  $queryRecupAllArticleFromBlog = "SELECT articles.* ,count(coID) as NbComments , photos.*
+                            			FROM articles
+                            			LEFT OUTER JOIN commentaires ON commentaires.coIDArticle = articles.arID
+                                  JOIN photos ON articles.arID = photos.phIDArticle
+                            			WHERE arIDBlog = $idBlog
+                            			AND arPublier = 1
+                            			GROUP BY 1
+                            			ORDER BY arDate $tri, arHeure $tri
+                            			LIMIT $posDebut, $nb";
   return $queryRecupAllArticleFromBlog;
 }
 
 
-function queryRecupArticleFromBlog2($idBlog){
-  $queryRecupAllArticleFromBlog = "SELECT *
-                                  FROM articles , photos
-                                  WHERE arIDBlog = $idBlog AND phIDArticle = arID
-                                  ORDER BY arID ASC";
-  return $queryRecupAllArticleFromBlog;
+function queryRecupOneArticle($IDArticle){
+  $sql = "SELECT *
+			FROM articles , photos
+			WHERE  arID = $IDArticle
+        AND phIDArticle = arID
+			  AND arPublier = 1
+			GROUP BY 1";
+  return $sql;
 }
 
 

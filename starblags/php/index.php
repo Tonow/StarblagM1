@@ -114,7 +114,7 @@ if ($stmtNoteArticle = mysqli_query($GLOBALS['bd'], $queryNoteArticle)) {
 	<table>
 		<tr>
 			<td style='padding: 0' colspan='2'>
-				<h3>Les 3 articles les mieux not�s</h3>
+				<h3>Les 3 articles les mieux notés</h3>
 			</td>
 		</tr>
 		";
@@ -209,6 +209,8 @@ else {
 
 /* Fermeture de la connexion */
 mysqli_close($bd);
+
+ob_end_flush ();
 
 footerGlobal();
 

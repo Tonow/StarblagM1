@@ -22,9 +22,6 @@ $IDPage = ($iMax > 2) ? (int) $tmp[2] : 0;	// Paramètre facultatif
 $aMJ = ($iMax > 3) ? (int) $tmp[3] : 0;	// Paramètre facultatif
 
 
-//$id = $_GET["id"]; // TODO XXX probleme id si on l'utilise avec 3 blog les plus visité et 3 article les mieux noté
-//$id = (int)$id;
-
 $ip = fp_getIP();
 
 firstHtml();
@@ -149,11 +146,17 @@ $tri = ($blogs['blTri'] == 0) ? 'ASC' : 'DESC';
 $posDebut = $IDPage * $blogs['blNbArticlesPage'];
 $nbArticleParPage = $blogs['blNbArticlesPage'];
 
+if ($IDArticle > 0) {
+	$queryRecupArticle = queryRecupOneArticle($IDArticle); // XXX Ne fonctionne pas
+}
+else {
+	$queryRecupArticle = queryRecupArticleFromBlog($idBl, $tri , $posDebut, $nbArticleParPage);
+}
 
-$queryRecupArticleFromBlog = queryRecupArticleFromBlog($idBl, $tri , $posDebut, $nbArticleParPage);
 
 
-if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticleFromBlog)) {
+
+if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticle)) {
 	echo "<div id='blcContenu'>";
 
 	while ($enr = mysqli_fetch_assoc($ArticleFromBlog)) {
@@ -233,7 +236,7 @@ if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticleFromBlog))
 			echo '
 			<!-- BLOC LIENS -->
 			<div class="blcLiens">
-				<a href="comment_voir.php" class="articleLienCom">'.$enr['arComment'].' commentaires</a>
+				<a href="comment_voir.php" class="articleLienCom">'.$enr['NbComments'].' commentaires</a>
 				<a href="comment_ajout.php" class="articleLienComAjout">ajouter un commentaire</a>
 				<a class="articleNote">10</a>
 				<a href="article_noter.php" class="articleLienNoteAjout">noter</a>
@@ -245,7 +248,7 @@ if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticleFromBlog))
 	mysqli_free_result($ArticleFromBlog);
 }
 else {
-	bdErreurRequet($queryRecupArticleFromBlog);
+	bdErreurRequet($queryRecupArticle);
 }
 
 
@@ -280,6 +283,8 @@ echo '
 
 /* Fermeture de la connexion */
 mysqli_close($bd);
+
+ob_end_flush ();
 
 footerGlobal();
 
