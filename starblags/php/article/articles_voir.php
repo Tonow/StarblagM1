@@ -263,8 +263,17 @@ if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticle)) {
 			}
 
 				echo'
-				<a class="articleNote">'.((fp_protectHTML($enr['NoteMoyenne'])) === 'NULL' ? '' : $enr['NoteMoyenne']).'</a>
-				<a href="article_noter.php" class="articleLienNoteAjout">noter</a>
+				<a class="articleNote">'.((fp_protectHTML($enr['NoteMoyenne'])) === 'NULL' ? '' : $enr['NoteMoyenne']).'</a>';
+
+
+				$urlNoterArticle = makeURL('article_noter.php', $enr['arID']);
+				$urlNoterArticle = "javascript:FP.ouvrePopUp('$urlNoterArticle')";
+
+				$liensNoteArticle = '<a href="'.$urlNoterArticle.'" class="articleLienNoteAjout">noter</a>';
+				echo "$liensNoteArticle";
+
+
+				echo'
 			</div>
  		</div>
 		<!-- FIN BLOC ARTICLE -->';

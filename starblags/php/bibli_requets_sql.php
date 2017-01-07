@@ -111,13 +111,32 @@ function infoBlog($idBlog){
  * @param	integer	$IDArticle	Cl� de l'article � traiter
  * @global	array	$_POST		Les zones de saisie du formulaire
  */
-function fpl_majBase($IDArticle , $Auteur , $Texte) {
+function fpl_majBaseCommentaire($IDArticle , $Auteur , $Texte) {
 	$sql = "INSERT INTO commentaires SET
-			coIDArticle = '.$IDArticle.',
-			coAuteur = '.$Auteur.',
-			coTexte = '.$Texte.',
+			coIDArticle = '$IDArticle',
+			coAuteur = '$Auteur',
+			coTexte = '$Texte',
 			coDate = ".date('Ymd').",
 			coHeure = '".date('H:i')."'";
+	return $sql;
+}
+
+
+//_____________________________________________________________________________
+/**
+ * Mise � jour de la base de donn�es
+ *
+ * @param	integer	$IDArticle	Cl� de l'article � traiter
+ * @global	array	$_POST		Les zones de saisie du formulaire
+ */
+function fpl_majNoteArticle($IDArticle , $Auteur , $Note , $ip ) {
+	$sql = "INSERT INTO articles_notes SET
+			anIDArticle = $IDArticle,
+			anDate = ".date('Ymd').",
+			anHeure = '".date('H:i')."',
+			anIP = '".$ip."',
+			anNom = '$Auteur',
+			anNote = {$Note}";
 	return $sql;
 }
 

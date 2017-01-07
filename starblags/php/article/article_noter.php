@@ -9,6 +9,8 @@ require ('../setting.php');
 $niveauDossier = 2;
 $dossier = niveauDossier($niveauDossier);
 
+$ip = fp_getIP();
+
 $IDArticle = (int) getURL();	// R�cup�ration des param�tres URL
 
 //-- Connexion base de donnée --------------------------------------
@@ -32,7 +34,8 @@ mysqli_free_result($bdTitreAr);
 
 
 
-$coAuteur = $coTexte = '';
+$anNom ='';
+$anNote = 0;
 $erreurs = array();		// Tableau des messages d'erreur des zones invalides
 
 
@@ -52,9 +55,9 @@ if (isset($_POST['btnValider'])) {
 	// � jour de la base de donn�es puis on ferme la fen�tre avec JavaScript.
 	$erreurs = fpl_verifZones();
 	if (count($erreurs) == 0) {
-		$fpl_majBaseCommentaire = fpl_majBaseCommentaire($IDArticle , stripslashes($_POST['coAuteur']) , stripslashes($_POST['coTexte']));
+		$fpl_majNoteArticle = fpl_majNoteArticle($IDArticle , stripslashes($_POST['anNom']) , stripslashes($_POST['anNote']) , $ip );
 
-		$R = mysqli_query($GLOBALS['bd'], $fpl_majBaseCommentaire) or bdErreurRequet($fpl_majBaseCommentaire);	// Mise � jour BD
+		$R = mysqli_query($GLOBALS['bd'], $fpl_majNoteArticle) or bdErreurRequet($fpl_majNoteArticle);	// Mise � jour BD
 		// Fermeture fen�tre.
 		// La fermeture est un peu sp�ciale : on force la page appelante
 		// � se recharger avec opener.location.reload()
@@ -88,12 +91,12 @@ if (isset($_POST['btnValider'])) {
 	foreach($_POST as $cle => $zone) {
 		$_POST[$cle] = stripslashes($zone);
 	}
-	$coAuteur = $_POST['coAuteur'];
-	$coTexte = $_POST['coTexte'];
+	$anNom = $_POST['anNom'];
+	$anNote = $_POST['anNote'];
 }
 
 
-firstPop($dossier , 'Ajouter un commentaire' ,  fp_protectHTML($arN['arTitre']));
+firstPop($dossier , 'Noter un article' ,  fp_protectHTML($arN['arTitre']));
 
 
 // Affichage des erreurs de saisie pr�c�dentes
@@ -107,13 +110,13 @@ if (count($erreurs) > 0) {
 //  Texte du commentaire
 
 // Les param�tres du lien sont crypt�s (IDArticle)
-$url = makeURL('commentaire_ajout.php', $IDArticle);
+$url = makeURL('article_noter.php', $IDArticle);
 
 echo '<form method="post" action="', $url, '">',
 		'<table>';
 
-fp_htmlSaisie('T', 'coAuteur', $coAuteur, 'Pseudo', 60, 60);
-fp_htmlSaisie('A', 'coTexte', $coTexte, 'Commentaire', 60, 6);
+fp_htmlSaisie('T', 'anNom', $anNom, 'Pseudo', 60, 60);
+fp_htmlSaisie('S', 'anNote', $anNote, 'Note', 1, range(0, 10));
 
 fp_htmlBoutons(2, 'B|btnFermer|Fermer|self.close();opener.focus()', 'S|btnValider|Valider');
 
@@ -124,7 +127,6 @@ echo 	'</table>',
 	'</body></html>';
 
 ob_end_flush();  // Fermeture du buffer => envoi du contenu au navigateur
-
 
 
 ?>

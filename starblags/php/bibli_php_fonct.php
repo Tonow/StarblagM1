@@ -427,13 +427,24 @@ function fp_getIP() {
 function fpl_verifZones() {
 	$erreurs = array();
 
-	if ($_POST['coAuteur'] === '' OR $_POST['coAuteur'] === ' ') {
-		$erreurs['coAuteur'] = 'La zone Pseudo ne doit pas commencer par un espace ou etre vide.';
-	}
-	if ($_POST['coTexte'] === '' OR $_POST['coTexte'] === ' ') {
-		$erreurs['coTexte'] = 'La zone Commentaire ne doit pas commencer par un espace ou etre vide.';
-	}
-
+  foreach ($_POST as $nom => $valeur) {
+    if ($nom == 'coAuteur'){
+      if ($valeur === '' OR $valeur === ' ') {
+    		$erreurs['coAuteur'] = 'La zone Pseudo ne doit pas commencer par un espace ou etre vide.';
+      }
+    }
+    elseif ($nom == 'coTexte') {
+      if ($valeur === '' OR $valeur === ' ') {
+    		$erreurs['coTexte'] = 'La zone Commentaire ne doit pas commencer par un espace ou etre vide.';
+    	}
+    }
+    elseif ($nom == 'anNom') {
+      if ($valeur === '' OR $valeur === ' ') {
+    		$erreurs['anNom'] = 'La zone Pseudo ne doit pas commencer par un espace ou etre vide.';
+    	}
+    }
+  }
+  
 	return $erreurs;
 }
 
