@@ -104,4 +104,22 @@ function infoBlog($idBlog){
 }
 
 
+//_____________________________________________________________________________
+/**
+ * Mise � jour de la base de donn�es
+ *
+ * @param	integer	$IDArticle	Cl� de l'article � traiter
+ * @global	array	$_POST		Les zones de saisie du formulaire
+ */
+function fpl_majBase($IDArticle , $Auteur , $Texte) {
+	$sql = "INSERT INTO commentaires SET
+			coIDArticle = '.$IDArticle.',
+			coAuteur = '.$Auteur.',
+			coTexte = '.$Texte.',
+			coDate = ".date('Ymd').",
+			coHeure = '".date('H:i')."'";
+	return $sql;
+}
+
+
  ?>

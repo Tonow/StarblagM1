@@ -417,6 +417,28 @@ function fp_getIP() {
 
 
 
+/**
+ * V�rification de la validit� des zones de saisie
+ *
+ * @global	array	$_POST	ZOnes de saisie du formulaire
+ *
+ * @return	array	Tableau associatif avec les messages d'erreurs (index = nom de zone)
+ */
+function fpl_verifZones() {
+	$erreurs = array();
+
+	if ($_POST['coAuteur'] === '' OR $_POST['coAuteur'] === ' ') {
+		$erreurs['coAuteur'] = 'La zone Pseudo ne doit pas commencer par un espace ou etre vide.';
+	}
+	if ($_POST['coTexte'] === '' OR $_POST['coTexte'] === ' ') {
+		$erreurs['coTexte'] = 'La zone Commentaire ne doit pas commencer par un espace ou etre vide.';
+	}
+
+	return $erreurs;
+}
+
+
+
 /////////////////////////////////////////
 //                  FIN                //
 //                 DIVERS              //

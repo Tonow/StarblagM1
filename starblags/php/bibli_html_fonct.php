@@ -203,4 +203,176 @@ function fp_htmlBoutons($colspan) {
 }
 
 
+//_____________________________________________________________________________
+/**
+ * Affiche le code html d'une ligne de tableau �cran de saisie.
+ *
+ * Le code html g�n�r� est de la forme
+ * <tr><td> libelle </td><td> zone de saisie </td></tr>
+ *
+ * Seuls les 3 premiers param�tres sont obligatoires. Les autres d�pendent
+ * du type de la zone.
+ * Le libell� de la zone est prot�g� pour un affichage HTML
+ * Si la valeur de la zone est du texte, il est prot�g� pour un affichage HTML
+ *
+ * @param	string	$type	type de la zone
+ * 							A : textarea
+ * 							AN : textarea uniquement en affichage
+ * 							C : case � cocher
+ * 							H : hidden
+ * 							P : password
+ * 							R : bouton radio
+ * 							S : select (liste)
+ * 							T : text
+ * 							TN : text  uniquement en affichage
+ * @param	string	$nom	nom de la zone (attribut name)
+ * @param	mixed	$valeur	valeur de la zone (attribut value)
+ * 							Pour le type S, c'est l'�l�ment s�lectionn�
+ * @param	string	$lib	libell� de la zone
+ * @param	integer	$size	si type T ou P : longueur (attribut size)
+ * 							si type A : longeur (attribut cols)
+ * 							si type S : nombre de lignes affich�es (attribut size)
+ * 							si type R : 1 = boutons c�te � c�te / 2 = boutons superpos�s
+ * 							si type C : 1 = cases c�te � c�te / 2 = cases superpos�s
+ * @param	mixed	$max	si type T ou P : longueur maximum (attribut maxlength)
+ * 							si type A : nombre de ligne (attribut rows)
+ * 							si type R : tableau des boutons radios (valeur => libell�)
+ * 							si type C : tableau des case � cocher (valeur => libell�)
+ * 							si type S : tableau des lignes de la liste (valeur => libell�)
+ * @param	string	$plus	Suppl�ment (ex : fonction JavaScript gestionnaire d'�v�nement)
+ */
+function fp_htmlSaisie($type, $nom, $valeur, $lib = '', $size = 80, $max = 255, $plus = '') {
+	if (is_string($valeur) && $valeur != '') {
+		$valeur = fp_protectHTML($valeur);
+	}
+
+	// Zone de type Hidden
+	if ($type == 'H') {
+		echo '<input type="hidden" name="', $nom, '" value="', $valeur, '">';
+		return;
+	}
+
+	$lib = fp_protectHTML($lib);
+
+	switch ($type) {
+	//--------------- Zone de type Texte
+	case 'T':
+	case 'TN':
+		echo '<tr>',
+				'<td align="right">', $lib, '&nbsp;</td>',
+				'<td>',
+					'<input type="text" name="', $nom, '" ', $plus,
+					'size="', $size, '" maxlength="', $max, '" value="', $valeur, '" ',
+					(($type == 'T') ? 'class="saisie">' : 'class="saisie_non" readonly>'),
+				'</td>',
+			'</tr>';
+		return;
+
+	//--------------- Zone de type Textarea
+	case 'A':
+	case 'AN':
+		echo '<tr>',
+				'<td align="right" valign="top">', $lib, '&nbsp;</td>',
+				'<td>',
+					'<textarea name="', $nom, '" cols="', $size, '" rows="'.$max.'" ', $plus,
+					(($type == 'A') ? 'class="saisie">' : 'class="saisie_non" readonly>'),
+					$valeur, '</textarea>',
+				'</td>',
+			'</tr>';
+		return;
+
+	//--------------- Zone de type Password
+	case 'P':
+		echo '<tr>',
+				'<td align="right">', $lib, '&nbsp;</td>',
+				'<td>',
+					'<input type="password" name="', $nom, '" ', $plus,
+					'size="', $size, '" maxlength="', $max, '" value="', $valeur, '" ',
+					'class="saisie">',
+				'</td>',
+			'</tr>';
+		return;
+
+	//--------------- Zone de type bouton radio
+	//--------------- Zone de type case � cocher
+	case 'R':
+	case 'C':
+		if ($type == 'R') {
+			$typeAttr = 'radio';
+			$nameAttr = $nom;
+		} else {
+			$typeAttr = 'checkbox';
+			$nameAttr = $nom.'[]';
+		}
+
+		echo '<tr>',
+				'<td align="right" ', (($size == 2) ? 'valign="top">' : '>'),
+					$lib, '&nbsp;',
+				'</td>',
+				'<td>';
+
+		$nb = 0;
+		foreach ($max as $val => $txt) {
+			if ($size == 2) {
+				$nb ++;
+				if ($nb > 1) {
+					echo '<br>';
+				}
+			}
+			echo '<input type="', $typeAttr, '" name="', $nameAttr, '" value="', $val, '"',
+				( ($valeur == $val) ? ' checked="true">' : '>' ),
+				fp_protectHTML($txt), '&nbsp;&nbsp;&nbsp;';
+		}
+		echo '</td>',
+			'</tr>';
+		return;
+
+	//--------------- Zone de type Select (liste)
+	case 'S':
+		echo '<tr>',
+				'<td align="right"', ( ($size > 1) ? ' valign="top">' : '>'),
+					$lib, '&nbsp;',
+				'</td>',
+				'<td>',
+					'<select name="', $nom, '" size="', $size, '" ', $plus, ' class="saisie">';
+
+		foreach($max as $cle => $val) {
+			echo '<option value="', $cle, '"', ( ($cle == $valeur) ? ' selected="yes">' : '>' ),
+					$val,
+				'</option>';
+		}
+
+		echo 		'</select>',
+				'</td>',
+			'</tr>';
+		return;
+	}
+}
+
+
+//_____________________________________________________________________________
+/**
+ * Affichage des messages d'erreur d'un formulaire
+ *
+ * @param	array	$erreurs	Tableau associatif des erreurs
+ */
+function fp_htmlErreurs($erreurs) {
+	echo '<div id="blcErreurs">';
+	if (count($erreurs) == 1) {
+		echo 'L\'erreur suivante a été détectée ';
+	} else {
+		echo 'Les erreurs suivantes ont été détectées ';
+	}
+	echo 'dans le formulaire de saisie :';
+
+	foreach($erreurs as $texte) {
+		echo '<p class="erreurTexte">',
+				fp_protectHTML($texte),
+			'</p>';
+	}
+
+	echo '</div>';
+}
+
+
 ?>
