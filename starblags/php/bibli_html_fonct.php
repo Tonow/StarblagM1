@@ -25,25 +25,30 @@ FOOTER;
  * Permet de generer le html pour le bandeau de tout les page
  *
  * @param string $dossier niveau dans le quelle se trouve le dossier
+ * @param int $priver valeur 0 => page publique sinon page privé
  *
  * @return void --> le beadeau html
  */
-function blocBandeau($dossier){
-	echo <<<BANDEAU
-	<div id="blcBandeau">
-		<form method="post" action="php/login.php">
-			<label for="txtPseudo">Pseudo</label>
-			<input type="text" name="txtPseudo" id="txtPseudo" value="">
-			<label for="txtPasse">Passe</label>
-			<input type="password" name="txtPasse" id="txtPasse" value="">
-			<input type="submit" name="btnLogin" value="Mon blog" class="bouton">
-			<input type="submit" name="btnNouveau" value="Créer un blog" class="bouton">
-		</form>
-		<a href="$dossier/php/">
-			<img src="$dossier/images/logo.gif" title="Accueil StarBlagS" width="104" height="67">
+function blocBandeau($dossier , $priver = 0){
+	echo '
+	<div id="blcBandeau">';
+
+		if ($priver == 0) {
+			echo '<form method="post" action="'.$dossier.'/php/login.php">
+					<label for="txtPseudo">Pseudo</label>
+					<input type="text" name="txtPseudo" id="txtPseudo" value="">
+					<label for="txtPasse">Passe</label>
+					<input type="password" name="txtPasse" id="txtPasse" value="">
+					<input type="submit" name="btnLogin" value="Mon blog" class="bouton">
+					<input type="submit" name="btnNouveau" value="Créer un blog" class="bouton">
+				</form>';
+		}
+
+		echo '
+		<a href="'.$dossier.'/php/">
+			<img src="'.$dossier.'/images/logo.gif" title="Accueil StarBlagS" width="104" height="67">
 		</a>
-	</div> <!-- FIN DU BLOC BANDEAU -->
-BANDEAU;
+	</div> <!-- FIN DU BLOC BANDEAU -->';
 }
 
 /**
