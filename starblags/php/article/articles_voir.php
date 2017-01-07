@@ -252,8 +252,17 @@ if ($ArticleFromBlog = mysqli_query($GLOBALS['bd'], $queryRecupArticle)) {
 				echo '<a class="articleLienCom">'.$enr['NbComments'].' commentaires</a>';
 			}
 
+			// Lien pour la saisie d'un commentaire
+			if ($enr['arComment'] == 1) {
+				// Les param�tres du lien sont crypt�s (IDArticle)
+				$url = makeURL('commentaire_ajout.php', $enr['arID']);
+				$url = "javascript:FP.ouvrePopUp('$url')";
+
+				$liensCommentaireAjout = '<a href="'.$url.'" class="articleLienComAjout">ajouter un commentaire</a>';
+				echo "$liensCommentaireAjout";
+			}
+
 				echo'
-				<a href="comment_ajout.php" class="articleLienComAjout">ajouter un commentaire</a>
 				<a class="articleNote">'.((fp_protectHTML($enr['NoteMoyenne'])) === 'NULL' ? '' : $enr['NoteMoyenne']).'</a>
 				<a href="article_noter.php" class="articleLienNoteAjout">noter</a>
 			</div>
